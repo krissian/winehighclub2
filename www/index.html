@@ -112,41 +112,13 @@
     <div ng-show="refdown.isOffline">
     Cannot connect to server, please try again.<br><br>
     <ons-button ng-click="refdown.retry()">Retry</ons-button>
-    <ons-button ng-click="refdown.getMeOffline();app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Offline Mode</ons-button>
-    </div>
-</ons-modal> 
-<!-- PAGE: refresh data manual sync -->
-<ons-modal var="app.refreshData.modalm" ng-controller="refreshDataController as refdown" ng-init="refdown.forceRefresh();">            
-    <div ng-show="!refdown.isOffline && !refdown.downloadReady">
-    <ons-icon icon="ion-load-c" spin="true"></ons-icon>
-    <p ng-bind-html="refdown.title"></p>
-    <br><br>
-    Wine List: {{refdown.jsonDownloadProgress.toFixed(1)}}% <br>    
-    Images: {{refdown.downloadProgress.toFixed(1)}}% <br>
-
-    </div> 
-    <div ng-show="refdown.downloadReady">Update Completed<br><ons-button ng-click="app.refreshData.modalm.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Close</ons-button></div>
-    <div ng-show="refdown.isOffline">
-    Cannot connect to server, please try again.<br><br>
-    <ons-button ng-click="refdown.retry">Retry</ons-button>
-    <ons-button ng-click="app.refreshData.modalm.hide();">Close</ons-button>
+    <ons-button ng-click="refdown.getMeOffline();app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Use offline</ons-button>
     </div>
 </ons-modal> 
 <!--Wine List -->
   <ons-template id="loading.html">
   <ons-navigator var="app.navi">
     <ons-page ng-controller="loadingController as loadingc" style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;">
-    </ons-page>
-    </ons-navigator>
-</ons-template>
-<!--Wine List data sync -->
-  <ons-template id="loadingm.html">
-  <ons-navigator var="app.navi">
-    <ons-page ng-controller="loadingController as loadingc" style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain; background-color: #FFFFFF">
-    <div style="height:350px">&nbsp;</div>
-    <div class="button-bar" style="text-align:center">
-    <ons-button ng-click="app.refreshData.modalm.show();">Sync Now</ons-button>
-    </div>
     </ons-page>
     </ons-navigator>
 </ons-template>
@@ -177,7 +149,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>        
         <ons-list-item class="center" ng-hide="cat.isFetching">  
         <ons-button>
@@ -234,7 +206,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>        
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="cat.isFetching">  
         <ons-button>
@@ -281,7 +253,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>        
         <ons-list-item class="center" ng-hide="cat.isFetching">  
         <ons-button>
@@ -332,7 +304,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>        
         <ons-list-item class="center" ng-hide="cat.isFetching">  
         <ons-button>
@@ -388,7 +360,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>        
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="cat.isFetching">
         <ons-button>
@@ -443,7 +415,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>       
         <ons-list-item class="center" ng-show="cat.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="cat.isFetching">  
         <ons-button>
@@ -490,7 +462,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>        
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -551,7 +523,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>       
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -607,7 +579,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -623,8 +595,6 @@
     <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
         <ons-row>
         <ons-col width="50px">
-        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
-            <!--<img ng-src="http://www.winehighclub.com/cms/components/com_virtuemart/shop_image/product/resized/{{item.product_thumb_image}}" class="category-image">-->
             <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
         </ons-col>
         <ons-col>
@@ -664,7 +634,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -721,7 +691,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -778,7 +748,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item class="center" ng-hide="wine.isFetching">  
         <ons-button>
@@ -850,7 +820,7 @@
         </ons-row>        
         </div>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>      
         <ons-list-item class="center">                          
         <!--<ons-button type="cta" should-spin="{{wine.isFetching}}" ng-click="wine.fetchPhotos()">Refresh</ons-button>-->
@@ -908,7 +878,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>        
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item ng-hide="wine.isFetching">
         <ons-row>
@@ -1023,7 +993,7 @@
             <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
         </ons-list-item>        
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
         <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.feeds" ng-click="item.url.length > 0 ? wine.openURL(item.url) : wine.openModal(item.image)">
         <!--ng-click="app.newsevent.modal.show()">  -->
@@ -1055,7 +1025,7 @@
           </div>          
         </ons-toolbar>
         <ons-list-item class="center" ng-show="wine.isOffline">  
-             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item> 
         <!--<div class="prop-desc" ng-bind-html="wine.feeds.content[0].introtext| to_trusted"></div>-->
         <div style="text-align:center; width:100%;" ng-bind-html="wine.introtext| to_trusted"></div>
@@ -1080,7 +1050,7 @@
             <p>Our company initially focused on the sales of high quality Bordeaux Grand Cru Classes and their En Primeur (Wine Futures) through our website at competitive price. As our company grows, our product range expanded to wines not only from Bordeaux, but also from Rhone, Burgundy, Champagne, Italy and Spain. Recently, we have been appointed as the sole agent for Guy Charlemagne (Champagne), Domaine Jean Michel Guillon (Gevrey-Chambertin), Domaine Servin (Chablis), Tenuta Santome (Prosecco) and Vollereaux (Champagne) in Hong Kong. Our aim is to keep bringing more varieties of wine from different parts of the world to you.</p>
             <p>Ever since the abolishment of wine duties in February 2008, Hong Kong has quickly moved towards its goal of becoming Asia's wine trading and distribution hub. Total wine imports into Hong Kong increased respectively by 80 percent, 41 percent and 73 percent in 2008, 2009 and 2010, reaching a total value of HKD 7 billion in 2010. Wine consumption in Hong Kong is forecasted to post a 25 percent increase in total volume consumption in Hong Kong by 2014. To cope with the rising demand, our company has been expanding our sales channel, widening our product range and continually enhancing the wine knowledge of our staff. We have also equipped our warehouse to HKQAA Fine Wine Storage Standard in order to provide a complete service to our customers.</p>
             <p>As it stands, we are one of the fine wine merchants in Hong Kong (logistic companies excluded) which have been accredited by HKQAA with the Fine Wine Storage Certificate. In fact, most of the other certified merchants mainly provide cellaring service while our major source of income is from wine sales, this proves our commitment of always providing our wines at their best quality. Our warehouse is built with high quality insulators, fully computerized temperature and humidity control system, LED lighting system, as well as real time online surveillance system. We are so 'pedantic' that an Airlock room is built before our main warehouse so as to prevent the slightest bit of temperature or humidity fluctuation. Face detection and 24 hours CCTV surveillance system are also installed by ADT for security protection.</p>
-    		<p>Being a reputable and responsible wine merchant, our company only works with selected suppliers with good reputation and quality assurance. We fully understand that storage condition is one of the most important factors affecting wine quality, thus not only do we work with logistic partners who can provide conditioned wine deliveries but also acquired our own warehouses. In 2011, we decided to make a substantial investment to establish a certified wine warehouse and was accredited with the Fine Wine Storage Certificate by HKQAA in 2012. With the certified warehouse, our suppliers are more confident in working with us as they know their wines will be in their best condition at the time of sales. On the other hand, our customers keep returning because they know we are reliable and second to none, both in pricing and wine quality.</p>
+        	<p>Being a reputable and responsible wine merchant, our company only works with selected suppliers with good reputation and quality assurance. We fully understand that storage condition is one of the most important factors affecting wine quality, thus not only do we work with logistic partners who can provide conditioned wine deliveries but also acquired our own warehouses. In 2011, we decided to make a substantial investment to establish a certified wine warehouse and was accredited with the Fine Wine Storage Certificate by HKQAA in 2012. With the certified warehouse, our suppliers are more confident in working with us as they know their wines will be in their best condition at the time of sales. On the other hand, our customers keep returning because they know we are reliable and second to none, both in pricing and wine quality.</p>
             <div style="background: url('images/whc_cert.png');background-position:center; background-repeat:no-repeat; background-size:contain; height:200px"  ng-click="app.whc_cert.modal.show()"></div>
             <p style="height: 200px">&nbsp;</p>            
         </div>          

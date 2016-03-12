@@ -6,6 +6,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
     vm.sortReverse = false;      
     vm.showFilter = false;
     vm.isOffline = false;
+    vm.thumbnailURL = ConstantService.thumbnailURL;
     //vm.id = 80004;    
     //console.log('wine.id : ' + vm.id);
     

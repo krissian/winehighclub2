@@ -60,7 +60,42 @@ angular.module('app').controller("wineSecondCatController", function($scope, $ht
                     console.log('failed');
                 });                
         } else {
-            var tmp = JSON.parse(ConstantService.winesByCat);
+            if (!ConstantService.winesByCat){
+            $http.get(ConstantService.localImgURL + '/winesByCat.json')
+            .success( function(response){              
+                    if (response) {                        
+                        var tmp = response.data;
+                    }
+                    //vm.feeds = data.jsonFlickrFeed;
+                    ConstantService.winesByCat = JSON.stringify(tmp);
+                   var tmpWines = tmp.wines.filter(function (row) {
+                  if(row.product_id == vm.id) {
+                    return true
+                  } else {
+                    return false;
+                  }
+                });                        
+                //var tmpWines = $filter('filter')(tmp, { 'cat_id': vm.id });
+                //console.log('tmpWines.length'+tmpWines.length);
+                var tmpJSONString = '{"wines":'+ JSON.stringify(tmpWines) + '}'
+                //vm.wines = tmpWines;
+                vm.wines = JSON.parse(tmpJSONString);
+                console.log('wineItemDetailController with localStorage');
+                vm.isFetching = false;
+                })
+            .error(function(error){                    
+                    vm.failed = true;                                   
+                    vm.isFetching = false;       
+                    vm.wines = $localStorage.getObject('winesbyID_'+vm.id);
+                    vm.isOffline = true;
+                    console.log('failed');
+                });
+            //console.log('vm.wines'+vm.wines.length);
+            //console.log('vm.wines'+JSON.stringify(vm.wines));    
+            } else {
+                var tmp = JSON.parse(ConstantService.winesByCat);
+            }
+            //var tmp = JSON.parse(ConstantService.winesByCat);
             var tmpWines = tmp.wines.filter(function (row) {
                   if(row.cat_id == vm.id) {
                     return true
