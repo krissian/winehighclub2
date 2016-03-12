@@ -1,0 +1,28 @@
+<ons-navigator animation="slide" var="app.navi">
+<div class="page center" ng-controller="AAMainController as wine" ng-init="wine.init()"> 
+    <ons-toolbar>
+    <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()"><ons-icon icon="bars"></ons-icon></ons-toolbar-button>
+        </div>
+        <div class="center">{{wine.title}}</div>
+    </ons-toolbar>
+    
+        <ons-list>
+        <ons-list-item class="center">                          
+                <ons-button type="cta" should-spin="{{wine.isFetching}}" ng-click="wine.fetchPhotos()">Fetch Photos</ons-button>
+        </ons-list-item>
+        
+        <ons-list-item ng-animate="'zoom'" ng-show="wine.failed">
+            Please try again.
+        </ons-list-item>
+ <!--
+        <ons-list-item ng-repeat="item in wine.feeds.productscat">
+            <img width="100%" ng-src="{{item.media.m}}">
+        </ons-list-item>
+        -->
+            <ons-list-item modifier="chevron" ng-repeat="item in wine.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'" ng-click="wine.showDetail(item.cat_id)">  
+                {{item.cat_desc}}  
+            </ons-list-item>
+        </ons-list>
+    </div>
+</ons-navigator>

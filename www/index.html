@@ -1,0 +1,1403 @@
+<!DOCTYPE HTML>
+<html >
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">    
+    <!--<meta http-equiv="Content-Security-Policy-Report-Only" content="default-src *; img-src * data:image/svg+xml ;style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">-->
+    <script src="components/loader.js"></script>
+    <script src="js/angular-sanitize.min.js"></script>
+    <script src="js/angular-resource.min.js"></script>  
+    <script src="js/ng-cordova.js"></script>
+    <script src="js/angular-ui-utils.min.js"></script>
+    <!--<script src="js/angular.dcb-img-fallback.min.js"></script>-->
+    <script src="js/app.js"></script>
+    <!-- Service Factory -->
+    <script src="js/constant.svc.js"></script>    
+    <!-- Wine List -->
+    <script src="js/loading.ctrl.js"></script>
+    <script src="js/wineFirstCat.ctrl.js"></script>
+    <script src="js/wineSecondCat.ctrl.js"></script>
+    <script src="js/wineItemDetail.ctrl.js"></script>
+    <script src="js/wineAllProduct.ctrl.js"></script>
+    <script src="js/wineAllProductSearch.crtl.js"></script>
+    <script src="js/highlights.ctrl.js"></script>
+    <!-- News & Events-->
+    <script src="js/newsEvent.ctrl.js"></script>
+    <script src="js/previousEvent.ctrl.js"></script>    
+    <!-- About Us -->
+    <script src="js/aboutUs.ctrl.js"></script>
+    <!-- Refresh Data -->
+    <script src="js/refreshData.ctrl.js"></script>
+
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/onsen-css-components.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/css/font-awesome.min.css">
+    <!-- local storage -->
+    <script src="js/localStorage.svc.js"></script>        
+    
+    <script>
+        function popupInAppBrowser(url) {    
+            var ref = window.open(url, '_blank', 'closebuttoncaption=Close,location=yes,enableViewportScale=yes,transitionstyle=coverhorizontal,toolbarposition=top,clearcache=no,clearsessioncache=no');    
+            ref.addEventListener("exit", function () {
+                ref.close();
+            });    
+            ref.show();
+        }        
+//        function onDeviceReady(){
+//            var map = new GoogleMap();
+//            map.initialize();
+//        }
+    
+    </script>
+
+</head>
+<body>
+    <!--
+    <ons-sliding-menu var="app.slidingMenu" menu-page="mainMenu.html" main-page="tab.html" side="left" type="overlay" max-slide-distance="200px" var="menu">
+    </ons-sliding-menu>
+    -->
+    
+    <ons-sliding-menu main-page="loading.html" menu-page="mainMenu.html" side="left" max-slide-distance="250px" var="app.slidingMenu"></ons-sliding-menu>
+
+<!--Wine List TAB -->
+  <ons-template id="wineListTabs.html">
+    <ons-page>
+      <ons-tabbar position="bottom" var="wineListTabs" animation="fade">
+        <ons-tabbar-item label="Region" page="wineList-region.html" icon="fa-globe" active="true"></ons-tabbar-item>
+        <ons-tabbar-item label="Vintage" page="wineList-vintage.html" icon="fa-calendar" ></ons-tabbar-item>
+        <!--<ons-tabbar-item label="Rating" page="wineList-rating.html" icon="fa-star-half-o"></ons-tabbar-item>-->
+        <ons-tabbar-item label="Wine Style" page="wineList-style.html" icon="fa-glass"></ons-tabbar-item>
+        <ons-tabbar-item label="Grape" page="wineList-grape.html" icon="fa-flask"></ons-tabbar-item>
+        <ons-tabbar-item label="All" page="wineList-allProduct.html" icon="fa-heart"></ons-tabbar-item>
+      </ons-tabbar>
+    </ons-page>
+  </ons-template>
+<!-- TAB: Highlights -->
+  <ons-template id="highlightsTabs.html">
+    <ons-page>
+      <ons-tabbar position="bottom" animation="fade" var="highlightsTabs">
+        <ons-tabbar-item label="Highlights" page="highlights-H.html" icon="fa-certificate" ></ons-tabbar-item>
+        <ons-tabbar-item label="New Arrivals" page="highlights-N.html" icon="fa-plus-circle" active="true"></ons-tabbar-item>
+        <ons-tabbar-item label="Special Offers" page="highlights-S.html" icon="fa-percent" ></ons-tabbar-item>
+        <ons-tabbar-item label="Daily Wine" page="highlights-D.html" icon="fa-moon-o" ></ons-tabbar-item>
+      </ons-tabbar>
+    </ons-page>
+  </ons-template>  
+<!-- TAB: About Us -->
+  <ons-template id="aboutUsTabs.html">
+    <ons-page>
+      <ons-tabbar position="bottom" animation="fade" var="aboutUsTabs">
+        <ons-tabbar-item label="About Us" page="aboutUs-home.html" icon="fa-home" active="true"></ons-tabbar-item>
+        <ons-tabbar-item label="Delivery" page="aboutUs-delivery.html" icon="fa-truck" ></ons-tabbar-item>
+        <ons-tabbar-item label="Contacts" page="aboutUs-contact.html" icon="fa-phone" ></ons-tabbar-item>
+      </ons-tabbar>
+    </ons-page>
+  </ons-template>
+<!-- PAGE: refresh data -->
+<ons-modal var="app.refreshData.modal" ng-controller="refreshDataController as refdown" >            
+    <div ng-show="!refdown.isOffline && !refdown.downloadReady">
+    <ons-icon icon="ion-load-c" spin="true"></ons-icon>
+    <p ng-bind-html="refdown.title"></p>
+    <br><br>
+    Wine List: {{refdown.jsonDownloadProgress.toFixed(1)}}% ({{refdown.progress}} / {{refdown.jsonDownloadTotal}})<br>    
+    Images: {{refdown.downloadProgress.toFixed(1)}}% ({{refdown.dlSuccessCount+refdown.dlFailCount+refdown.dlExistCount}} / {{refdown.wineDownloadTotal}})<br>
+    <!-- debug message -->
+    <p ng-show="refdown.isDebug">
+        Total Success/Fail/Exists : + {{refdown.dlSuccessCount}} / {{refdown.dlFailCount}} / {{refdown.dlExistCount}}
+    </p>
+    </div> 
+    <div ng-show="refdown.downloadReady">Update Completed<br><ons-button ng-click="app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Close</ons-button></div>
+    <div ng-show="refdown.isOffline">
+    Cannot connect to server, please try again.<br><br>
+    <ons-button ng-click="refdown.retry()">Retry</ons-button>
+    <ons-button ng-click="refdown.getMeOffline();app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Offline Mode</ons-button>
+    </div>
+</ons-modal> 
+<!-- PAGE: refresh data manual sync -->
+<ons-modal var="app.refreshData.modalm" ng-controller="refreshDataController as refdown" ng-init="refdown.forceRefresh();">            
+    <div ng-show="!refdown.isOffline && !refdown.downloadReady">
+    <ons-icon icon="ion-load-c" spin="true"></ons-icon>
+    <p ng-bind-html="refdown.title"></p>
+    <br><br>
+    Wine List: {{refdown.jsonDownloadProgress.toFixed(1)}}% <br>    
+    Images: {{refdown.downloadProgress.toFixed(1)}}% <br>
+
+    </div> 
+    <div ng-show="refdown.downloadReady">Update Completed<br><ons-button ng-click="app.refreshData.modalm.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Close</ons-button></div>
+    <div ng-show="refdown.isOffline">
+    Cannot connect to server, please try again.<br><br>
+    <ons-button ng-click="refdown.retry">Retry</ons-button>
+    <ons-button ng-click="app.refreshData.modalm.hide();">Close</ons-button>
+    </div>
+</ons-modal> 
+<!--Wine List -->
+  <ons-template id="loading.html">
+  <ons-navigator var="app.navi">
+    <ons-page ng-controller="loadingController as loadingc" style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;">
+    </ons-page>
+    </ons-navigator>
+</ons-template>
+<!--Wine List data sync -->
+  <ons-template id="loadingm.html">
+  <ons-navigator var="app.navi">
+    <ons-page ng-controller="loadingController as loadingc" style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain; background-color: #FFFFFF">
+    <div style="height:350px">&nbsp;</div>
+    <div class="button-bar" style="text-align:center">
+    <ons-button ng-click="app.refreshData.modalm.show();">Sync Now</ons-button>
+    </div>
+    </ons-page>
+    </ons-navigator>
+</ons-template>
+<!-- PAGE: wineList-region -->
+  <ons-template id="wineList-region.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>    
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>        
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>        
+        <ons-list-item class="center" ng-hide="cat.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon>             
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>             
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}-->
+        </ons-list-item>        
+        <!--<ons-list-item class="center">                          
+            <ons-button type="cta" should-spin="{{cat.isFetching}}" ng-click="cat.init()">Refresh</ons-button>
+        </ons-list-item>-->
+        <!--<ons-list-item modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'" " ng-click="cat.showDetail(item.cat_id)">-->
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter:  {cat_type: 'REGION', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse"  ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">       
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>          
+        
+
+        
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>  
+<!-- PAGE: wineList-vintage -->
+  <ons-template id="wineList-vintage.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">                  
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>                      
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>          
+        <!--<ons-list-item class="center">                          
+            <ons-button type="cta" should-spin="{{cat.isFetching}}" ng-click="cat.init()">Refresh</ons-button>
+        </ons-list-item>-->
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="cat.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>        
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}        -->
+        </ons-list-item>           
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'VINTAGE', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse" ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>          
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>  
+<!--PAGE: wineList-grape-->  
+  <ons-template id="wineList-grape.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>    
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>        
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>        
+        <ons-list-item class="center" ng-hide="cat.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon>             
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>             
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}-->
+        </ons-list-item>        
+        <!--<ons-list-item class="center">                          
+            <ons-button type="cta" should-spin="{{cat.isFetching}}" ng-click="cat.init()">Refresh</ons-button>
+        </ons-list-item>-->
+        <!--<ons-list-item modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'" " ng-click="cat.showDetail(item.cat_id)">-->
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter:  {cat_type: 'GRAPE', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse"  ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">       
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>            
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>   
+<!--PAGE: wineList-style-->  
+  <ons-template id="wineList-style.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>    
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>        
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>        
+        <ons-list-item class="center" ng-hide="cat.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon>             
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>             
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}-->
+        </ons-list-item>        
+        <!--<ons-list-item class="center">                          
+            <ons-button type="cta" should-spin="{{cat.isFetching}}" ng-click="cat.init()">Refresh</ons-button>
+        </ons-list-item>-->
+        <!--<ons-list-item modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'" " ng-click="cat.showDetail(item.cat_id)">-->
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter:  {cat_type: 'STYLE', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse"  ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">       
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>            
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>     
+<!-- PAGE: wineList-exclprod -->
+  <ons-template id="wineList-exclprod.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">Exclusive Producers</div>
+          <div class="right">                
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>          
+        <!--<div style="background: url('images/whc_exclprod.jpg');background-position:center; background-repeat:no-repeat; background-size:contain; height:200px"  ng-click="app.whc_exclprod.modal.show()"><p style="text-align:right"></div>-->
+        
+        <!--<ons-list-item class="center">                          
+            <ons-button type="cta" should-spin="{{cat.isFetching}}" ng-click="cat.init()">Refresh</ons-button>
+        </ons-list-item>-->
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="cat.isFetching">
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>        
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}        -->
+        </ons-list-item>                
+        <ons-list-item ng-hide="cat.isFetching">        
+        <img ng-src="images/whc_exclprod.jpg" class="newsevent-image" ng-click="app.whc_exclprod.modal.show()">
+        </ons-list-item>
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'EXCLPROD', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse" ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>          
+        
+        <ons-modal var="app.whc_exclprod.modal">        
+            <div style="width:100%; height: 95%;background: url('images/whc_exclprod.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.whc_exclprod.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p></div>                   
+        </ons-modal>        
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>    
+<!-- PAGE: wineList-rating -->
+  <ons-template id="wineList-rating.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="wineFirstCatController as cat" ng-init="cat.init()">-->
+      <ons-page ng-controller="wineFirstCatController as cat" ng-init="cat.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">      
+            <ons-toolbar-button ng-click="cat.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="cat.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="cat.showFilter">
+            <input type="search" ng-model="cat.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>          
+        <ons-list-item class="center" ng-show="cat.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>       
+        <ons-list-item class="center" ng-show="cat.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="cat.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && cat.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="cat.sortType = 'cat_desc'; cat.sortReverse = !cat.sortReverse" ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="cat.showFilter = !cat.showFilter;"></ons-icon>
+        </ons-button>        
+                <!--{{cat.getTotal()}} product{{cat.getTotal() > 1 ? 's' : '' }}        -->
+        </ons-list-item>           
+        <ons-list-item ng-hide="cat.isFetching" modifier="chevron" ng-repeat="item in cat.feeds.productscat | filter: {cat_type: 'RATING', cat_desc: cat.filterQ} | orderBy: cat.sortType:cat.sortReverse" ng-click="app.navi.pushPage('wineList-CatItems.html', { animation: 'slide', selectedid: item.cat_id, selectedDesc: item.cat_desc })">
+            <div class="category-name">{{item.cat_desc}}</div> <div class="category-message">{{item.cat_count}} product{{item.cat_count > 1 ? 's' : '' }}</div>
+        </ons-list-item>          
+      </ons-page>
+    </ons-navigator>          
+  </ons-template>    
+<!-- PAGE: wineList-allProduct.html-->
+  <ons-template id="wineList-allProduct.html" ng-cloak>
+   <ons-navigator var="app.navi">
+    <ons-page ng-controller="wineAllProductController as wine" ng-init="wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{cat.title}}</div>
+          <div class="right">      
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>            
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>        
+                <!--{{wine.getTotal()}} product{{wine.getTotal() > 1 ? 's' : '' }}        -->
+        </ons-list-item>           
+    <!--<ons-list-item ng-hide="wine.isFetching" >  
+    <div>a b c</div>    
+    </ons-list-item>-->
+        <!--<ons-list>
+    <ons-list-item modifier="chevron" class="item" ons-lazy-repeat="MyDelegate">
+      Item # {{item.product_name}}
+    </ons-list-item>
+  </ons-list>-->
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> <div class="category-message">{{item.vintage}} | {{item.rating}} | {{item.region}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+    <!--<on-list-item>xxx{{wine.wines.wines.length}}xxx</on-list-item>-->
+      </ons-page>        
+      </ons-navigator>
+  </ons-template>       
+<!-- PAGE: wineList-CatItems.html-->
+  <ons-template id="wineList-CatItems.html" ng-cloak>
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="wineSecondCatController as wine" ng-init="wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-back-button>Back</ons-back-button>
+          </div>
+          <!--<div class="center">{{wine.desc}}</div>-->
+          <div class="center">{{ wine.desc | limitTo: 20 }}{{wine.desc.length > 20 ? '...' : ''}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>       
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>        
+        </ons-list-item>               
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse | unique: product_name" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}} | {{item.region}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+  </ons-template>    
+<!-- PAGE: highlights-H.html-->
+  <ons-template id="highlights-H.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="highlightsController as wine" ng-model="wine.id" ng-init="wine.id=80004; wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">     
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>             
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>        
+        </ons-list-item>           
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <!--<img ng-src="http://www.winehighclub.com/cms/components/com_virtuemart/shop_image/product/resized/{{item.product_thumb_image}}" class="category-image">-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+      </ons-navigator>
+  </ons-template>    
+<!-- PAGE: highlights-N.html-->
+  <ons-template id="highlights-N.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <ons-page ng-controller="highlightsController as wine" ng-model="wine.id" ng-init="wine.id=80003; wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">    
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>             
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon>             
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>                
+        </ons-list-item>          
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image">
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+      </ons-navigator>
+  </ons-template>     
+<!-- PAGE: highlights-S.html-->
+  <ons-template id="highlights-S.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="highlightsController as wine" ng-model="wine.id" ng-init="wine.id=80002; wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">         
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>             
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>                
+        </ons-list-item>               
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+      </ons-navigator>
+  </ons-template>  
+<!-- PAGE: highlights-D.html-->
+  <ons-template id="highlights-D.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="highlightsController as wine" ng-model="wine.id" ng-init="wine.id=80001; wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">        
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>             
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>            
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>                
+        </ons-list-item>         
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+      </ons-navigator>
+  </ons-template>
+<!-- PAGE: wineList-ItemDetail.html-->
+  <ons-template id="wineList-ItemDetail.html" ng-cloak>
+      <ons-page ng-controller="wineItemDetailController as wine" ng-init="wine.init()" modifier="shop-details" >        
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-back-button>Back</ons-back-button>
+              </div>
+              <!--<div class="center">{{wine.wines.wines[0].product_name}}</div>-->
+              <div class="center">{{ wine.wines.wines[0].product_name | limitTo: 20 }}{{wine.wines.wines[0].product_name.length > 20 ? '...' : ''}}</div>
+              <div class="right">
+              <!--<ons-button ng-click="wine.share()"><ons-icon icon="fa-share-square-o"></ons-icon></ons-button>-->
+              </div>          
+            </ons-toolbar>
+        <div ng-show="wine.isFetching">
+        <div class="card">
+        <ons-list-item class="center">
+            <ons-row>
+            <ons-col>
+                <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+            </ons-col>
+            </ons-row>
+        </ons-list-item>  
+        </div>
+        </div>
+        <div ng-show="!wine.isFetching">
+        <div class="card">
+        <ons-row>
+        <ons-col>
+        
+          <div class="card-name">{{wine.wines.wines[0].product_name}}</div>
+          <div class="card-desc" ng-bind-html="wine.wines.wines[0].product_s_desc"></div>
+        </ons-col>
+        <ons-col width="80px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+        <!--<div style="width:90%; height: 90%; background: url('http://www.winehighclub.com/cms/components/com_virtuemart/shop_image/product/resized/{{wine.wines.wines[0].product_thumb_image}}'); background-position:center; background-repeat:no-repeat; background-size:contain;"></div>-->
+            <div>
+            <img ng-src="{{wine.thumbnailURL + wine.wines.wines[0].product_thumb_image}}" class="card-image" ng-click="wine.showModal()" >
+            <div style="z-index: 100; position: relative; top: -30px; right: 10px; text-align: right" ng-click="wine.showModal()"><ons-icon icon="fa-search-plus" style="font-size: 16px; width: 1em;"></ons-icon></div>
+            </div>
+        </ons-col>        
+        </ons-row>        
+        </div>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>      
+        <ons-list-item class="center">                          
+        <!--<ons-button type="cta" should-spin="{{wine.isFetching}}" ng-click="wine.fetchPhotos()">Refresh</ons-button>-->
+        <!--<ons-button ng-click="wine.showModal()">test</ons-button>-->
+        <!--<ons-button ng-click="wine.openURL(wine.wines.wines[0].product_id)">Buy Now</ons-button>-->
+        </ons-list-item>
+          <ons-list-item >
+            <div class="prop-desc">
+            <div class="rating"><div class="rating-num">
+            {{wine.wines.wines[0].product_currency}} {{wine.wines.wines[0].product_price}}
+            </div></div>            
+            <div class="ratingright"><div class="ratingright-num" ng-click="wine.openURL(wine.wines.wines[0].product_id)">
+            Buy Now
+            </div></div>                   
+            </div>                 
+            <div class="prop-desc" ng-bind-html="wine.wines.wines[0].product_desc">               
+            </div>
+          </ons-list-item>
+
+        </ons-list>
+        </div>
+        <ons-modal var="app.modal">        
+        <!--<div style="width:100%; height: 95%;background: url('http://www.winehighclub.com/cms/components/com_virtuemart/shop_image/product/{{wine.wines.wines[0].product_full_image}}'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="wine.hideModal()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle-o"></ons-icon></p></div>                    -->
+            <div style="width:100%; height: 95%; background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.modal.hide()">
+            <p style="text-align:right">
+                <ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p>
+            </p>            
+            <p ng-click="app.modal.hide()"><img style="max-width: 60%; height: auto; width: auto;" ng-src="{{wine.productImgURL+wine.wines.wines[0].product_full_image}}" ></p>
+        </div>  
+          <!--<ons-button ng-click="wine.hideModal()">close</ons-button>-->
+        </ons-modal>
+
+      </ons-page>
+  </ons-template>
+<!-- PAGE: wineListSearch.html-->
+  <ons-template id="wineListSearch.html" ng-cloak>
+      <ons-page ng-controller="wineAllProductSearchController as wine" ng-init="wine.init()" modifier="whc-list">
+<ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">                
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item ng-hide="wine.isFetching">
+        <ons-row>
+                <ons-col width="20%">Region: </ons-col>
+                <ons-col width="70%">
+                    <select class="custom-select-box" ng-model="wine.selectedRegion" ng-options="item.cat_desc as item.cat_desc for item in wine.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'">            
+                    <option value="">--- Please select ---</option>
+                    </select>                    
+            </ons-row>
+            <ons-row>
+                <ons-col width="20%">Vintage: </ons-col>
+                <ons-col>
+                    <select class="custom-select-box" ng-model="wine.selectedVintage" ng-options="item.cat_desc as item.cat_desc for item in wine.feeds.productscat | filter: {cat_type: 'VINTAGE'} | orderBy: 'cat_desc'">            
+                    <option value="">--- Please select ---<ons-icon icon="fa-chevron-circle-down"></ons-icon></option>
+                    </select>
+                </ons-col>
+            </ons-row>
+            <!--<ons-row>
+                <ons-col width="20%">Rating: </ons-col>
+                <ons-col>
+                    <select class="custom-select-box" ng-model="wine.selectedRating" ng-options="item.cat_desc as item.cat_desc for item in wine.feeds.productscat | filter: {cat_type: 'RATING'} | orderBy: 'cat_desc'">            
+                    <option value="">--- Please select ---<ons-icon icon="fa-chevron-circle-down"></ons-icon></option>
+                    </select>
+                </ons-col>
+            </ons-row>-->
+            <ons-row>
+                <ons-col width="20%">Grape: </ons-col>
+                <ons-col>
+                    <select class="custom-select-box" ng-model="wine.selectedGrape" ng-options="item.cat_desc as item.cat_desc for item in wine.feeds.productscat | filter: {cat_type: 'GRAPE'} | orderBy: 'cat_desc'">            
+                    <option value="">--- Please select ---<ons-icon icon="fa-chevron-circle-down"></ons-icon></option>
+                    </select>
+                </ons-col>
+            </ons-row> 
+            <ons-row>
+                <ons-col width="20%">Style: </ons-col>
+                <ons-col>
+                    <select class="custom-select-box" ng-model="wine.selectedStyle" ng-options="item.cat_desc as item.cat_desc for item in wine.feeds.productscat | filter: {cat_type: 'STYLE'} | orderBy: 'cat_desc'">            
+                    <option value="">--- Please select ---<ons-icon icon="fa-chevron-circle-down"></ons-icon></option>
+                    </select>
+                </ons-col>
+            </ons-row>            
+            <!--<ons-row>
+                <ons-col width="100%">{{ wine.feeds.productscat.length}} item{{ wine.feeds.productscat.length > 0? 's':''}} found  </ons-col>
+            </ons-row>            -->
+        </ons-list-item>
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon> 
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        </ons-list-item>           
+    <!--<ons-list-item ng-hide="wine.isFetching" >  
+    <div>a b c</div>    
+    </ons-list-item>-->
+        <!--<ons-list>
+    <ons-list-item modifier="chevron" class="item" ons-lazy-repeat="MyDelegate">
+      Item # {{item.product_name}}
+    </ons-list-item>
+  </ons-list>-->
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ, region: wine.selectedRegion || undefined, vintage: wine.selectedVintage || undefined, rating: wine.selectedRating || undefined, grape: wine.selectedGrape || undefined, style: wine.selectedStyle || undefine} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image" >
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> <div class="category-message">{{item.vintage}} | {{item.rating}} | {{item.region}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+ <!--<ons-modal var="app.pop.modal">
+    <div style="height:90%">
+        <ons-list>
+            <ons-list-header>Region</ons-list-header>
+        </ons-list>
+        <ons-list ng-repeat="item in wine.feeds.productscat | filter: {cat_type: 'REGION'} | orderBy: 'cat_desc'">
+        <ons-list-item modifier="tappable" ng-click="app.pop.modal.hide()">
+          <label class="radio-button radio-button--list-item">
+            <input type="radio" name="a" checked="checked">
+            <div class="radio-button__checkmark radio-button--list-item__checkmark"></div>
+            {{item.cat_desc}}
+          </label>
+        </ons-list-item>
+
+      </ons-list>
+    </div>
+</ons-modal>                 -->
+      </ons-page>
+  </ons-template>
+<!-- PAGE: newsEvent.html-->
+  <ons-template id="newsEvent.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="newsEventController as wine" ng-init="wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="wine.init()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>          
+        </ons-toolbar>      
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item>         
+        <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.feeds" ng-click="item.url.length > 0 ? wine.openURL(item.url) : wine.openModal(item.image)">
+        <!--ng-click="app.newsevent.modal.show()">  -->
+            <img ng-src="{{wine.cmsURL + item.image}}" class="newsevent-image" >
+        </ons-list-item>
+        
+        <ons-modal var="app.newsevent.modal">        
+            <div style="width:100%; height: 95%;background: url('{{wine.cmsURL + wine.eventImgURL}}'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.newsevent.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p></div>                              
+        </ons-modal>        
+      </ons-page>
+      </ons-navigator>
+  </ons-template>    
+<!-- PAGE: previousEvent.html-->
+  <ons-template id="previousEvent.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="previousEventController as wine" ng-init="wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="wine.init()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>          
+        </ons-toolbar>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Offline mode: Some functions may not avaiable</div>
+        </ons-list-item> 
+        <!--<div class="prop-desc" ng-bind-html="wine.feeds.content[0].introtext| to_trusted"></div>-->
+        <div style="text-align:center; width:100%;" ng-bind-html="wine.introtext| to_trusted"></div>
+      </ons-page>
+  </ons-navigator>
+  </ons-template>    
+<!-- PAGE: About Us -->  
+<!-- PAGE: About Us -->
+  <ons-template id="aboutUs-home.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page style="background: url('images/background.jpg'); background-position:center; background-repeat:no-repeat; background-size:cover;">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center" class="card-name">WineHighClub</div>
+        </ons-toolbar>      
+        <div style="text-align: justify; padding: 10px 10px 10px 10px" class="whc-desc">
+        <h3>About Wine High Club</h3>
+            <p>Our company initially focused on the sales of high quality Bordeaux Grand Cru Classes and their En Primeur (Wine Futures) through our website at competitive price. As our company grows, our product range expanded to wines not only from Bordeaux, but also from Rhone, Burgundy, Champagne, Italy and Spain. Recently, we have been appointed as the sole agent for Guy Charlemagne (Champagne), Domaine Jean Michel Guillon (Gevrey-Chambertin), Domaine Servin (Chablis), Tenuta Santome (Prosecco) and Vollereaux (Champagne) in Hong Kong. Our aim is to keep bringing more varieties of wine from different parts of the world to you.</p>
+            <p>Ever since the abolishment of wine duties in February 2008, Hong Kong has quickly moved towards its goal of becoming Asia's wine trading and distribution hub. Total wine imports into Hong Kong increased respectively by 80 percent, 41 percent and 73 percent in 2008, 2009 and 2010, reaching a total value of HKD 7 billion in 2010. Wine consumption in Hong Kong is forecasted to post a 25 percent increase in total volume consumption in Hong Kong by 2014. To cope with the rising demand, our company has been expanding our sales channel, widening our product range and continually enhancing the wine knowledge of our staff. We have also equipped our warehouse to HKQAA Fine Wine Storage Standard in order to provide a complete service to our customers.</p>
+            <p>As it stands, we are one of the fine wine merchants in Hong Kong (logistic companies excluded) which have been accredited by HKQAA with the Fine Wine Storage Certificate. In fact, most of the other certified merchants mainly provide cellaring service while our major source of income is from wine sales, this proves our commitment of always providing our wines at their best quality. Our warehouse is built with high quality insulators, fully computerized temperature and humidity control system, LED lighting system, as well as real time online surveillance system. We are so 'pedantic' that an Airlock room is built before our main warehouse so as to prevent the slightest bit of temperature or humidity fluctuation. Face detection and 24 hours CCTV surveillance system are also installed by ADT for security protection.</p>
+    		<p>Being a reputable and responsible wine merchant, our company only works with selected suppliers with good reputation and quality assurance. We fully understand that storage condition is one of the most important factors affecting wine quality, thus not only do we work with logistic partners who can provide conditioned wine deliveries but also acquired our own warehouses. In 2011, we decided to make a substantial investment to establish a certified wine warehouse and was accredited with the Fine Wine Storage Certificate by HKQAA in 2012. With the certified warehouse, our suppliers are more confident in working with us as they know their wines will be in their best condition at the time of sales. On the other hand, our customers keep returning because they know we are reliable and second to none, both in pricing and wine quality.</p>
+            <div style="background: url('images/whc_cert.png');background-position:center; background-repeat:no-repeat; background-size:contain; height:200px"  ng-click="app.whc_cert.modal.show()"></div>
+            <p style="height: 200px">&nbsp;</p>            
+        </div>          
+        
+        <ons-modal var="app.whc_cert.modal">        
+        <div style="width:100%; height: 95%;background: url('images/whc_cert.png'); background-color: white;background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.whc_cert.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p></div>                    
+          <!--<ons-button ng-click="wine.hideModal()">close</ons-button>-->
+        </ons-modal>
+        
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+  
+<!-- PAGE: Delivery -->
+  <ons-template id="aboutUs-delivery.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page style="background: url('images/background.jpg'); background-position:center; background-repeat:no-repeat; background-size:cover;">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+        </ons-toolbar>      
+        <div style="text-align: justify; padding: 10px 10px 10px 10px" class="whc-desc">
+            <h3>DELIVERY</h3>    		
+			<p>Free Delivery - On order over 6 bottles or purchase over HKD3000</span></p>
+			<p>Kowloon Area : Monday - Friday</p>
+			<p>HK Island : Monday / Wednesday / Friday</p>
+			<p>Tuen Mun, Yuen Long, Sai Kung : Tuesday / Thursday</p>        
+            <div style="background: url('images/whc_car.png');background-position:center; background-repeat:no-repeat; background-size:contain;height:200px" ng-click="app.whc_car.modal.show()">&nbsp;</div>
+            <div style="background: url('images/whc_delivery.png');background-position:center; background-repeat:no-repeat; background-size:contain;height:200px" ng-click="app.whc_delivery.modal.show()">&nbsp;</div>
+            <p style="height: 200px">&nbsp;</p>   
+        </div>
+        <ons-modal var="app.whc_car.modal">        
+        <div style="width:100%; height: 95%;background: url('images/whc_car.png'); background-color: white;background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.whc_car.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle" style="color:#b93861"></ons-icon>&nbsp;</p></div>                    
+          <!--<ons-button ng-click="wine.hideModal()">close</ons-button>-->
+        </ons-modal>
+        <ons-modal var="app.whc_delivery.modal">        
+        <div style="width:100%; height: 95%;background: url('images/whc_delivery.png'); background-color: white;background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.whc_delivery.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle" style="color:#b93861"></ons-icon>&nbsp;</p></div>                    
+          <!--<ons-button ng-click="wine.hideModal()">close</ons-button>-->
+        </ons-modal>
+        
+        
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+  
+<!-- PAGE: Contact -->
+  <ons-template id="aboutUs-contact.html" modifier="shop-details" ng-cloak >
+    <ons-navigator var="app.navi" ng-controller="aboutUsController as about">
+      <ons-page style="background: url('images/background.jpg'); background-position:center; background-repeat:no-repeat; background-size:cover;">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+        </ons-toolbar>
+        <!--
+        <div style="text-align: justify" >
+
+			<p>Sales Office: </p>
+        	<p><a href="http://maps.google.com/?ie=UTF8&ll=22.369553,114.136528&spn=0.00251,0.004823&z=18">RM 3, 6/F, Seapower Centre, No. 73 Lei Muk Road, Kwai Chung, Hong Kong</a></p>
+    		<p>Tel: <a href="tel:35202028">+852 3520 2028</a></p>
+    		<p>Email: <a href="mailto:sales@winehighclub.com?subject=From%20WHC%20Android%20App" target="_blank">sales@winehighclub.com</a></p>
+    		<p>Homepage: <a href="http://www.winehighclub.com" target="_blank">www.winehighclub.com</a></p>
+        </div>
+        -->
+        <!--<div class="card" style="text-align: justify; padding: 10px 10px 10px 10px" >
+            <!--<h3>Contact Us</h3> -->
+            
+        </div>-->
+      <!--background: rgba(185, 96, 57, .1);-->
+        <!--<div style="text-align: justify; padding: 20px 20px 20px 20px;  background: rgba(0, 0, 0, .1);" >-->
+        <!--<div style="text-aling: center"><img src="images/logo.png" alt="" /></div>-->
+        <!--<div class="card" style="text-align: justify; padding: 10px 10px 10px 10px" ></div>-->
+        <!--<div id="whc-map" style="width: 500px;height: 500px"></div>        -->
+        <div style="height: 150px; justify; padding: 10px 10px 10px 10px"></div>
+        <ons-list-item modifier="tappable" ng-click="about.openURL('MAP')" >
+        <div class="whc-desc" >
+            <ons-row>
+            <ons-col width="30px">
+                <!--<ons-button ng-click="about.openURL('MAP')" modifier="quiet"><ons-icon icon="fa-map-marker" size="20px"></ons-icon></ons-button>-->
+                <ons-icon icon="fa-map-marker" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+            <!--<a href="https://www.google.com/maps?q=Wine+High+Club&z=8" target="_blank">RM 3, 6/F, Seapower Centre, No. 73 Lei Muk Road, Kwai Chung, Hong Kong</a>-->
+            <div>
+            RM 3, 6/F, Seapower Centre, No. 73 Lei Muk Road, Kwai Chung, Hong Kong<br><br>
+            </div>
+            </ons-col>
+            </ons-row>
+          </div>
+        </ons-list-item>
+        <ons-list-item modifier="tappable" ng-click="about.callTel(35202028)">           
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px" >
+                <!--<ons-button ng-click="about.callTel(35202028)" modifier="quiet"><ons-icon icon="fa-mobile" size="20px"></ons-icon></ons-button>-->
+                <ons-icon icon="fa-mobile" size="20px" ></ons-icon>
+            </ons-col>
+            <ons-col>
+            <!--<a href="tel:35202028">+852 3520 2028</a>-->
+            <div >+852 3520 2028<br><br></div>
+            </ons-col>
+            </ons-row>
+          </div>
+        </ons-list-item>
+    
+        <ons-list-item modifier="tappable" ng-click="about.callMail()">
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">          
+                <!--<ons-button ng-click="about.callMail()" modifier="quiet"><ons-icon icon="fa-envelope" size="20px" ></ons-icon></ons-button>-->
+                <ons-icon icon="fa-envelope" size="20px" ></ons-icon>
+            </ons-col>
+            <ons-col>
+            <!--<a href="mailto:sales@winehighclub.com?subject=From%20WHC%Mobile%20App" target="_blank">sales@winehighclub.com</a></p>-->
+            sales@winehighclub.com<br><br>
+            </ons-col>
+            </ons-row>
+          </div>
+        </ons-list-item>
+        <ons-list-item modifier="tappable" ng-click="about.openURL('WWW')">
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">          
+                <ons-icon icon="fa-globe" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+            <!--<a href="http://www.winehighclub.com" target="_blank">www.winehighclub.com</a>-->
+            www.winehighclub.com<br><br>
+            </ons-col>
+            </ons-row>
+          </div>
+          </ons-list-item>
+         
+        <ons-list-item modifier="tappable" ng-click="about.openURL('FB')">
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">          
+                <ons-icon icon="fa-facebook" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+            <!--<a href="https://www.facebook.com/WineHighClub/" target="_blank">WineHighClub</a>-->
+            WineHighClub<br><br>
+            </ons-col>
+            </ons-row>
+          </div>
+          </ons-list-item>
+            <ons-list-item>
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">         
+                <ons-icon icon="fa-whatsapp" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+                WhatsApp: 9070 7432<br><br>          
+            </ons-col>
+            </ons-row>
+          </div>
+          </ons-list-item>
+        <ons-list-item modifier="tappable">
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">          
+                <ons-icon icon="fa-weixin" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+                WeChat: WineHighClub<br><br>
+            </ons-col>
+            </ons-row>
+          </div>
+          </ons-list-item>
+        <ons-list-item modifier="tappable">
+          <div class="whc-desc">
+            <ons-row>
+            <ons-col width="30px">          
+                <ons-icon icon="fa-money" size="20px"></ons-icon>
+            </ons-col>
+            <ons-col>
+               All cheques should be made payable to "WHC Limited" or deposit to <br>
+               HSBC: 411-878465-838 or <br>Nanyang Com. bank: 043-473-00219546<br><br><br><br><br><br><br><br><br><br>
+            </ons-col>
+            </ons-row>
+          </div>
+          </ons-list-item>
+        <!--</div>-->
+
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+
+<!-- PAGE: Terms and Conditions -->
+  <ons-template id="aboutUs-tc.html" ng-cloak>
+    <ons-navigator var="app.navi">
+      <ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:cover;">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+        </ons-toolbar>      
+        <!--<ons-button ng-click="app.navi.pushPage('item2.html')">go</ons-button>-->
+        <div style="text-align: justify ; padding: 10px 10px 10px 10px" class="whc-desc">
+        <h3 style="text-align: left; line-height: 110%">TERMS AND CONDITIONS</h3>
+        <p><span style="text-decoration: underline;"><strong>Definitions</strong></span></p>
+        <p>In these terms and conditions, the 'Company' or 'whc' will mean WHC and the 'Customer' will mean any person, firm, company, corporation or body which places an order with the Company.</p>
+        <p><span style="text-decoration: underline;"><strong>Sales</strong></span></p>
+        <p>All subject to our final confirmation. Prices are subject to change without notice. All wines are offered subject to remaining unsold. All goods sold are strictly non-exchangeable and non-refundable. This list cancels all previous lists.</p>
+        <p><span style="text-decoration: underline;"><strong>Payment</strong></span></p>
+        <p>Payment is cash/cheque on delivery, except for approved trade account.</p>
+        <div  style="text-align: justify;"></div>
+        <p>All cheques should be made payable to "whc"</p>
+        <div  style="text-align: justify;"></div>
+        <p>In the event of non-payment of an invoice within the specified terms stated above, whc reserves the right to charge an interest of 6% per month of the overdue amount until payment. If the company shall have to consult solicitors or other agents to recover overdue sums, the Customer will indemnify the Company in relation to reasonable fees payable to such solicitors and/or agents.</p>
+        <p><span style="text-decoration: underline;"><strong>Delivery/Collection</strong></span></p>
+        <p>whc offers a free delivery service to any address on the Hong Kong Island, Kowloon and New Territories, for purchases over 6 bottles (750ml). <br>For orders below 6 bottles (750ml), delivery charges will be HK$145 per order.<br>For delivery to the outlying islands, please consult us.</p>
+        <p><span style="text-decoration: underline;"><strong>Breakages/Shortfall</strong></span></p>
+        <p>All Customers are requested to examine the goods immediately upon collection or delivery for any deficiencies and/or damages. Claims (if any) must be lodged at the time of delivery, otherwise any breakages or shortfall shall be deemed to have occurred thereafter.</p>
+        <p><span style="text-decoration: underline;"><strong>Force Majeure </strong></span></p><p>whc shall not be liable for any failure to meet our obligations occasioned by circumstances beyond our reasonable control.</p>
+        </div>
+        <p style="height: 200px">&nbsp;</p>   
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+  
+<!-- Home -->
+  <ons-template id="home.html">
+    <ons-navigator var="app.navi">
+      <ons-page style="background: url('images/background.jpg'); background-position:center; background-repeat:no-repeat; background-size:cover;">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+        </ons-toolbar>      
+        <!--<ons-button ng-click="app.navi.pushPage('item2.html')">go</ons-button>-->
+        <div style="text-align: center" >
+        </div>
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+
+<ons-template id="item2.html">
+    <ons-page>
+      <ons-toolbar fixed-style="">
+        <div class="left" style="line-height: 44px">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center">Title2</div>
+      </ons-toolbar>
+    <ons-button ng-click="app.navi.pushPage('item3.html')">go</ons-button>
+    </ons-page>
+  </ons-template>
+
+  
+<!-- Wine List -->
+  <ons-template id="wineList.html">
+    <ons-navigator var="app.navi">
+      <ons-page>
+        <ons-toolbar fixed-style="">
+          <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">WineHighClub</div>
+        </ons-toolbar>      
+     
+      </ons-page>
+    </ons-navigator>    
+  </ons-template>
+<!-- MENU -->
+  <ons-template id="mainMenu.html">
+    <ons-list>        
+      <ons-list-header></ons-list-header>
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('wineList-exclprod.html', {closeMenu: true});">
+        <ons-icon icon="fa-star-o" size="20px"></ons-icon> Exclusive Producers
+        <!--Exclusive Producers-->
+      </ons-list-item>          
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('wineListTabs.html', {closeMenu: true});">
+        <ons-icon icon="fa-list" size="20px"></ons-icon> Wine List
+      </ons-list-item>
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('highlightsTabs.html', {closeMenu: true});">
+        <ons-icon icon="fa-plus-circle" size="20px"></ons-icon> New Arrivals
+      </ons-list-item>
+    <ons-list-header></ons-list-header>      
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('newsEvent.html', {closeMenu: true});">
+        <ons-icon icon="fa-calendar" size="20px"></ons-icon> News and Events
+      </ons-list-item>
+    <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('previousEvent.html', {closeMenu: true});">
+        <ons-icon icon="fa-clock-o" size="20px"></ons-icon> Previous Events
+      </ons-list-item>      
+    <ons-list-header></ons-list-header>
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('aboutUsTabs.html', {closeMenu: true}); ">
+        <ons-icon icon="fa-home" size="20px"></ons-icon> About Us
+      </ons-list-item>
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('aboutUs-tc.html', {closeMenu: true});">
+        <ons-icon icon="fa-file-text-o" size="20px"></ons-icon> Terms and Conditions
+      </ons-list-item>
+    <ons-list-header></ons-list-header>      
+      <ons-list-item modifier="chevron" onclick="popupInAppBrowser('http://www.winehighclub.com')">
+        <ons-icon icon="fa-globe" size="20px"></ons-icon> Our website
+      </ons-list-item>
+    <!--<ons-list-header></ons-list-header>      
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('loadingm.html', {closeMenu: true});">
+        <ons-icon icon="fa-cloud-download" size="20px"></ons-icon> Wine List Sync
+      </ons-list-item>      -->
+    </ons-list> 
+  </ons-template>
+</body>
+</html>
