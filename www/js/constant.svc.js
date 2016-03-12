@@ -10,6 +10,7 @@ angular.module('app').factory('ConstantService', function() {
         appInit: false,
         winesByCat: '',
         localImgURL: '',
+        backCatID: '80003',
   };
 });
 

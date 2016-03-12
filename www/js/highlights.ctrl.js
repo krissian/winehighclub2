@@ -6,7 +6,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
     vm.sortReverse = false;      
     vm.showFilter = false;
     vm.isOffline = false;
-    vm.thumbnailURL = ConstantService.thumbnailURL;
+    //vm.thumbnailURL = ConstantService.thumbnailURL;
     //vm.id = 80004;    
     //console.log('wine.id : ' + vm.id);
     
@@ -42,6 +42,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
     }
     
     vm.init = function($scope){
+        ConstantService.backCatID = vm.id;
         if (vm.id == 80004){vm.desc = 'Highlights';}
         if (vm.id == 80003){vm.desc = 'New Arrivals';}
         if (vm.id == 80002){vm.desc = 'Special Offers';}
@@ -81,15 +82,18 @@ angular.module('app').controller("highlightsController", function($scope, $http,
             vm.desc += ' ('+ vm.wines.wines.length +')';
             vm.isFetching = false;
             console.log('highlightsController with localStorage');
-        }
-                  
+        }       
         };            
     vm.refresh = function($scope){
+        
+        console.log('ConstantService.backCatID: '+ ConstantService.backCatID);
+        vm.id = ConstantService.backCatID;
+        
         if (vm.id == 80004){vm.desc = 'Highlights';}
         if (vm.id == 80003){vm.desc = 'New Arrivals';}
         if (vm.id == 80002){vm.desc = 'Special Offers';}
         if (vm.id == 80001){vm.desc = 'Daily Wine';}
-        //vm.id = $scope.id;
+        
         vm.failed = false;        
         vm.isFetching = true;
 
@@ -124,20 +128,21 @@ angular.module('app').controller("highlightsController", function($scope, $http,
         //var winelist = $filter('filter')(vm.feeds.productscatmap, {cat_id:vm.id})[0];
         //console.log ('filtered : ' + winelist.cat_desc);
         //vm.text = winelist.cat_desc;
-    vm.showDetail = function(id){
+    vm.showDetail = function(sid){
         console.log ('click');
-        console.log ('selectedid' + id);
+        console.log ('selectedid' + sid);
+        ConstantService.backCatID = vm.id;
         //app.navitwo.pushPage("wineItems.html", { animation: "lift", selectedid: id });
         //app.slidingMenu.setMainPage('wineItems.html', {closeMenu: true})
-        app.navi.pushPage("wineList-ItemDetail.html", { animation: "slide", selectedid: id });
+        app.navi.pushPage("wineList-ItemDetail.html", { animation: "slide", selectedid: sid });
     };
     vm.goBack = function($scope){
         app.navi.popPage();
     };
-    vm.showSearch = function(id){
-        console.log ('click');
-        console.log ('selectedid' + id);
-        app.navi.pushPage("wineListSearch.html", { animation: "slide", selectedid: id });
+    vm.showSearch = function(sid){
+        console.log ('selectedid: ' + sid);
+        
+        app.navi.pushPage("wineListSearch.html", { animation: "slide", selectedid: sid });
         //app.navi.pushPage("wineItems.html", { animation: "lift", selectedid: id });
     };    
     

@@ -108,11 +108,11 @@
         Total Success/Fail/Exists : + {{refdown.dlSuccessCount}} / {{refdown.dlFailCount}} / {{refdown.dlExistCount}}
     </p>
     </div> 
-    <div ng-show="refdown.downloadReady">Update Completed<br><ons-button ng-click="app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Close</ons-button></div>
+    <div ng-show="refdown.downloadReady">Update Completed<br><br><ons-button ng-click="app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;</ons-button></div>
     <div ng-show="refdown.isOffline">
-    Cannot connect to server, please try again.<br><br>
-    <ons-button ng-click="refdown.retry()">Retry</ons-button>
-    <ons-button ng-click="refdown.getMeOffline();app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } )">Use offline</ons-button>
+    Cannot connect to server, please try again. <br><br> The app can be used offline after data synchornised. <br><br>
+    <ons-button ng-click="refdown.retry()">&nbsp;&nbsp;&nbsp;Retry&nbsp;&nbsp;&nbsp;</ons-button>
+    <!--<ons-button ng-click="refdown.getMeOffline();app.refreshData.modal.hide();app.navi.pushPage('highlightsTabs.html', { animation : 'slide' } );window.location.reload(true);">Use offline</ons-button>-->
     </div>
 </ons-modal> 
 <!--Wine List -->

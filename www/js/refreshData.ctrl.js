@@ -32,6 +32,10 @@ angular.module('app').controller("refreshDataController", function($scope, $http
         if (ConstantService.appInit = true){
         vm.downloadCount = 0;
         vm.downloadProgress = 0;
+        vm.progress = 0;
+        vm.dlSuccessCount = 0;
+        vm.dlFailCount = 0;
+        vm.dlExistCount = 0;
         vm.jsonDownloadProgress = 0;
         vm.isOffline = true;
         vm.init();
@@ -41,6 +45,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
     $interval( function(){ vm.callAtInterval(); }, 5*60*1000);
     
     vm.getMeOffline =function($scope){
+        $timeout(function () {
         console.log('getMeOffline');
         vm.downloadReady = true;
         ConstantService.appInit = true;
@@ -51,7 +56,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
         function(error) { // error callback for #requestFileSystem
            console.log('Error with #requestFileSystem method.', error);
         });
-        
+        });
     }
     
     vm.retry = function($scope){
@@ -64,7 +69,20 @@ angular.module('app').controller("refreshDataController", function($scope, $http
     
         vm.failed = false;        
         vm.isFetching = true;
-
+        
+        vm.downloadCount = 0;
+        vm.downloadProgress = 0;
+        vm.progress = 0;
+        vm.dlSuccessCount = 0;
+        vm.dlFailCount = 0;
+        vm.dlExistCount = 0;
+        vm.jsonDownloadProgress = 0;
+        
+        //last sync
+        var lastSync = $localStorage.getObject('appLastSync');
+        if (!lastSync){
+            console.log('last sync:' + JSON.stringify(lastSync));
+        }
         //wine from local to localstorage
 
             //getJSON('/wines.json','wines');
