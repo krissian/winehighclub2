@@ -9,6 +9,7 @@ angular.module('app').controller("wineFirstCatController", function($scope, $htt
     vm.isOffline = false;
     
     vm.init = function($scope){
+        console.log('wineFirstCatController init');
         vm.failed = false;        
         vm.isFetching = true;
         
@@ -48,6 +49,8 @@ angular.module('app').controller("wineFirstCatController", function($scope, $htt
                   
         };
     vm.refresh = function($scope){
+        console.log('wineFirstCatController refresh');
+        
         vm.failed = false;        
         vm.isFetching = true;
 

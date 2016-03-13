@@ -33,6 +33,7 @@ angular.module('app').controller("wineItemDetailController", function($scope, $h
         }
     
     vm.init = function($scope){
+        console.log('wineItemDetailController init');
         vm.failed = false;        
         vm.isFetching = true;
 
@@ -162,6 +163,7 @@ vm.fetchPhotos = function($scope){
         //app.slidingMenu.setMainPage('wineItems.html', {closeMenu: true})
         app.navi.pushPage("wineList-ItemDetailImage.html", { animation: "lift", selectedImage: url });
     };
+
         vm.showModal = function(url) {    
             vm.modal_msg = url;
             app.modal.show();

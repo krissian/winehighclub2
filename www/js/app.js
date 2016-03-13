@@ -21,7 +21,7 @@ angular.module('app').config( [
 //        downgularFileToolsProvider.usePersistentMemory(true);
 //        downgularFileToolsProvider.setStorageQuota(30*1024*1024);
     }
-])    
+]);
 
 /*
 var module = ons.bootstrap('my-app', ['onsen']);

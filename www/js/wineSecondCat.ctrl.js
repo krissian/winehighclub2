@@ -31,6 +31,7 @@ angular.module('app').controller("wineSecondCatController", function($scope, $ht
         }
     
     vm.init = function($scope){
+        console.log('wineSecondCatController init');
         vm.failed = false;        
         vm.isFetching = true;
         ConstantService.backCatID = vm.id;
@@ -115,6 +116,7 @@ angular.module('app').controller("wineSecondCatController", function($scope, $ht
         };    
 
     vm.refresh = function($scope){
+        console.log('wineSecondCatController refresh');
         vm.failed = false;        
         vm.isFetching = true;
         console.log('ConstantService.backCatID: '+ ConstantService.backCatID);

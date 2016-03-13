@@ -42,7 +42,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
         }
     }
     
-    $interval( function(){ vm.callAtInterval(); }, 5*60*1000);
+    $interval( function(){ vm.callAtInterval(); }, 60*60*1000);
     
     vm.getMeOffline =function($scope){
         $timeout(function () {
@@ -408,8 +408,10 @@ function writeToFile(fileName, data) {
                     $timeout(function () {
                     console.log('image downloaded failed: '+vm.downloadCount);
                     console.log("An error has occurred: Code = " + error.code + error.source + error.target);
-                    remoteFiles.push(remoteFile);
-                    vm.dlFailCount++;
+                    if(vm.dlFailCount < 100){
+                        remoteFiles.push(remoteFile);
+                        vm.dlFailCount++;
+                    }
                     downloadFile();
                     });
                     

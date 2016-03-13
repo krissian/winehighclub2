@@ -9,7 +9,16 @@ angular.module('app').controller("highlightsController", function($scope, $http,
     //vm.thumbnailURL = ConstantService.thumbnailURL;
     //vm.id = 80004;    
     //console.log('wine.id : ' + vm.id);
-    
+//    ons.ready(function() {
+//        app.navi.on('postpop', function(event) {
+//        var page = event.leavePage; // Get current page object
+//        console.log(page);
+//        console.log('postpop ConstantService.backCatID: '+ ConstantService.backCatID);
+//        if (ConstantService.backCatID == 80003){app.navi.resetToPage('highlights-N.html');}
+//        //window.location.reload(true); //reload the whole app
+//        //app.navi.resetToPage(page);
+//        });
+//    });
     if (!ConstantService.appInit){
             app.refreshData.modal.show();
         }
@@ -43,6 +52,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
     
     vm.init = function($scope){
         ConstantService.backCatID = vm.id;
+        console.log('highlightsController init');
         if (vm.id == 80004){vm.desc = 'Highlights';}
         if (vm.id == 80003){vm.desc = 'New Arrivals';}
         if (vm.id == 80002){vm.desc = 'Special Offers';}
@@ -85,7 +95,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
         }       
         };            
     vm.refresh = function($scope){
-        
+        console.log('highlightsController refresh');
         console.log('ConstantService.backCatID: '+ ConstantService.backCatID);
         vm.id = ConstantService.backCatID;
         
@@ -96,7 +106,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
         
         vm.failed = false;        
         vm.isFetching = true;
-
+        vm.wines = '';
         
         $http({
             method: 'GET',
@@ -108,18 +118,20 @@ angular.module('app').controller("highlightsController", function($scope, $http,
                     }
                     //vm.feeds = data.jsonFlickrFeed;
                     vm.wines = items;
-                    vm.isFetching = false;
-                    vm.failed = false;
+                    
                     vm.desc += ' ('+ response.data.wines.length +')';
                     $localStorage.setObject('winesbyCatID_'+vm.id,items);
+                    vm.isFetching = false;
+                    vm.failed = false;
                     vm.isOffline = false;
                     console.log('get wines success');
                 })
             .error(function(error){                    
-                    vm.failed = true;                                   
-                    vm.isFetching = false;                       
+                                          
                     vm.wines = $localStorage.getObject('winesbyCatID_'+vm.id);
                     vm.desc += ' ('+ vm.wines.wines.length +')';
+                    vm.failed = true;                                   
+                    vm.isFetching = false; 
                     vm.isOffline = true;
                     console.log('failed');
                 });    
@@ -129,8 +141,7 @@ angular.module('app').controller("highlightsController", function($scope, $http,
         //console.log ('filtered : ' + winelist.cat_desc);
         //vm.text = winelist.cat_desc;
     vm.showDetail = function(sid){
-        console.log ('click');
-        console.log ('selectedid' + sid);
+        console.log ('selectedid: ' + sid);
         ConstantService.backCatID = vm.id;
         //app.navitwo.pushPage("wineItems.html", { animation: "lift", selectedid: id });
         //app.slidingMenu.setMainPage('wineItems.html', {closeMenu: true})
