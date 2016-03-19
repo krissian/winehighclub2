@@ -91,9 +91,10 @@ angular.module('app').controller("refreshDataController", function($scope, $http
             getJSON('/winesbyCatID.json?cat_id='+80003,'winesbyCatID_80003',true);
             getJSON('/winesbyCatID.json?cat_id='+80002,'winesbyCatID_80002',true);
             getJSON('/winesbyCatID.json?cat_id='+80001,'winesbyCatID_80001',true);
-            getJSON('/winesByCat.json','winesByCat',false);
+            //getJSON('/winesByCat.json','winesByCat',false);
             //getJSON('/winesByCat.json','winesByCat',true);
             getJSON('/productscat.json','productscat',true);
+            getJSON('/productscatmap.json','productscatmap',true);
             //getProductsCatJSON();
             
                 
