@@ -49,4 +49,7 @@
   <access origin="mailto:*"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="EnableViewportScale" value="false"/>
+  <preference name="monaca:MonacaBackendUrl" value="https://cloud.monaca.mobi/json-rpc/"/>
+  <preference name="monaca:MonacaBackendId" value="560cfa407e21934152de42e1"/>
+  <preference name="monaca:MonacaBackendApiKey" value="5eab242039ccd806f0072a037b699def7c21d67b93db0f6f4b5683fd7d898c1a"/>
 </widget>

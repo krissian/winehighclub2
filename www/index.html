@@ -84,7 +84,17 @@
         <ons-tabbar-item label="Daily Wine" page="highlights-D.html" icon="fa-moon-o" ></ons-tabbar-item>
       </ons-tabbar>
     </ons-page>
-  </ons-template>  
+  </ons-template>
+<!-- TAB: Others -->
+  <ons-template id="othersTabs.html">
+    <ons-page>
+      <ons-tabbar position="bottom" animation="fade" var="othersTabs">
+        <ons-tabbar-item label="Mineral Water" page="others-Wt.html" icon="fa-tint" active="true"></ons-tabbar-item>
+        <ons-tabbar-item label="Craft Beer" page="others-B.html" icon="fa-beer" ></ons-tabbar-item>
+        <ons-tabbar-item label="Whisky/Whiskey" page="others-Wk.html" icon="fa-bolt" ></ons-tabbar-item>
+      </ons-tabbar>
+    </ons-page>
+  </ons-template> 
 <!-- TAB: About Us -->
   <ons-template id="aboutUsTabs.html">
     <ons-page>
@@ -776,6 +786,63 @@
       </ons-page>
       </ons-navigator>
   </ons-template>
+<!-- PAGE: Others-Wt.html-->
+  <ons-template id="others-Wt.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <ons-page ng-controller="highlightsController as wine" ng-model="wine.id" ng-init="wine.id=80003; wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">    
+            <ons-toolbar-button ng-click="wine.refresh()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+            <ons-toolbar-button ng-click="wine.showSearch()">
+              <ons-icon icon="fa-search" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>             
+          </div>          
+        </ons-toolbar>      
+        <div class="search-bar" ng-show="wine.showFilter">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>         
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
+        </ons-list-item>         
+        <ons-list-item class="center" ng-hide="wine.isFetching">  
+        <ons-button>
+            <ons-icon icon="fa-sort-alpha-asc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && wine.sortReverse"></ons-icon>
+            <ons-icon icon="fa-sort-alpha-desc" ng-click="wine.sortType = 'product_name'; wine.sortReverse = !wine.sortReverse" ng-show="wine.sortType == 'product_name' && !wine.sortReverse"></ons-icon>             
+            <!--<span ng-show="cat.sortType == 'cat_desc' && !cat.sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="cat.sortType == 'cat_desc' && cat.sortReverse" class="fa fa-caret-up"></span>-->
+        </ons-button>
+        <ons-button>
+            <ons-icon icon="fa-filter" ng-click="wine.showFilter = !wine.showFilter;"></ons-icon>
+        </ons-button>                
+        </ons-list-item>          
+    <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.wines.wines | filter: {product_name: wine.filterQ} | orderBy: wine.sortType:wine.sortReverse" ng-click="wine.showDetail(item.product_id)">  
+        <ons-row>
+        <ons-col width="50px">
+        <!--http://www.winehighclub.com/cms/images/stories/virtuemart/product/palmer8.jpg-->
+            <img ng-src="{{wine.thumbnailURL + item.product_thumb_image}}" class="category-image">
+        </ons-col>
+        <ons-col>
+            <div class="category-name">{{item.product_name}}</div> 
+            <div class="category-message">{{item.vintage}} | {{item.rating}} | {{item.region}}</div>
+            <div class="category-message">{{item.product_currency}} {{item.product_price}}</div>
+        </ons-col>
+        </ons-row>
+    </ons-list-item>
+      </ons-page>
+      </ons-navigator>
+  </ons-template>       
+  
 <!-- PAGE: wineList-ItemDetail.html-->
   <ons-template id="wineList-ItemDetail.html" ng-cloak>
       <ons-page ng-controller="wineItemDetailController as wine" ng-init="wine.init()" modifier="shop-details" >        
@@ -1045,10 +1112,10 @@
         </ons-toolbar>      
         <div style="text-align: justify; padding: 10px 10px 10px 10px" class="whc-desc">
         <h3>About Wine High Club</h3>
-            <p>Our company initially focused on the sales of high quality Bordeaux Grand Cru Classes and their En Primeur (Wine Futures) through our website at competitive price. As our company grows, our product range expanded to wines not only from Bordeaux, but also from Rhone, Burgundy, Champagne, Italy and Spain. Recently, we have been appointed as the sole agent for Guy Charlemagne (Champagne), Domaine Jean Michel Guillon (Gevrey-Chambertin), Domaine Servin (Chablis), Tenuta Santome (Prosecco) and Vollereaux (Champagne) in Hong Kong. Our aim is to keep bringing more varieties of wine from different parts of the world to you.</p>
-            <p>Ever since the abolishment of wine duties in February 2008, Hong Kong has quickly moved towards its goal of becoming Asia's wine trading and distribution hub. Total wine imports into Hong Kong increased respectively by 80 percent, 41 percent and 73 percent in 2008, 2009 and 2010, reaching a total value of HKD 7 billion in 2010. Wine consumption in Hong Kong is forecasted to post a 25 percent increase in total volume consumption in Hong Kong by 2014. To cope with the rising demand, our company has been expanding our sales channel, widening our product range and continually enhancing the wine knowledge of our staff. We have also equipped our warehouse to HKQAA Fine Wine Storage Standard in order to provide a complete service to our customers.</p>
-            <p>As it stands, we are one of the fine wine merchants in Hong Kong (logistic companies excluded) which have been accredited by HKQAA with the Fine Wine Storage Certificate. In fact, most of the other certified merchants mainly provide cellaring service while our major source of income is from wine sales, this proves our commitment of always providing our wines at their best quality. Our warehouse is built with high quality insulators, fully computerized temperature and humidity control system, LED lighting system, as well as real time online surveillance system. We are so 'pedantic' that an Airlock room is built before our main warehouse so as to prevent the slightest bit of temperature or humidity fluctuation. Face detection and 24 hours CCTV surveillance system are also installed by ADT for security protection.</p>
-        	<p>Being a reputable and responsible wine merchant, our company only works with selected suppliers with good reputation and quality assurance. We fully understand that storage condition is one of the most important factors affecting wine quality, thus not only do we work with logistic partners who can provide conditioned wine deliveries but also acquired our own warehouses. In 2011, we decided to make a substantial investment to establish a certified wine warehouse and was accredited with the Fine Wine Storage Certificate by HKQAA in 2012. With the certified warehouse, our suppliers are more confident in working with us as they know their wines will be in their best condition at the time of sales. On the other hand, our customers keep returning because they know we are reliable and second to none, both in pricing and wine quality.</p>
+            <p>Our company initially focused on the sales of high quality Bordeaux Grand Cru Classes and their En Primeurs (Wine Futures) through our website at competitive price. As our company grows, our product range expanded to wines not only from Bordeaux, but also from Rhone, Burgundy, Champagne, Loire, Italy, Germany and Spain. Since 2013, we have been appointed as the sole agent for Guy Charlemagne (Champagne), Jacquinot &amp; Fils (Champagne), Domaine Servin (Chablis), Domaine Tour Saint Michel (Chateauneuf-du-Pape), Ackerman (Loire Valley), Azelia (Barolo), Bruno Rocca (Barbaresco), Caprili (Montalcino), Cocito (Barbaresco), Scagliola (Monferrato), Tenuta Santome (Prosecco) and Clemens Busch (Marienburg) in Hong Kong. Our aim is to keep bringing more varieties of quality wine from different parts of the world to you. &nbsp;Beside the wine, we also appointed as Sole Mineral Water exclusive importer and distrubitor in Hong Kong, including 3 brands - Acqua Armani (By Giorgio Armani), Sole Arte and I&#39;Italiana.</p>
+            <p>Ever since the abolishment of wine duties in February 2008, Hong Kong has quickly moved towards its goal of becoming Asia&#39;s wine trading and distribution hub. Total wine imports into Hong Kong increased respectively by 80 percent, 41 percent and 73 percent in 2008, 2009 and 2010, reaching a total value of HKD 7 billion in 2010. Wine consumption in Hong Kong is forecasted to post a 25 percent increase in total volume consumption in Hong Kong by 2014. To cope with the rising demand, our company has been expanding our sales channel, widening our product range and continually enhancing the wine knowledge of our staff. We have also equipped our warehouse to HKQAA Fine Wine Storage Standard in order to provide a complete service to our customers.</p>
+            <p>As it stands, we are one of the fine wine merchants in Hong Kong (logistic companies excluded) which have been accredited by HKQAA with the Fine Wine Storage Certificate. In fact, most of the other certified merchants mainly provide cellaring service while our major source of income is from wine sales, this proves our commitment of always providing our wines at their best quality. Our warehouse is built with high quality insulators, fully computerized temperature and humidity control system, LED lighting system, as well as real time online surveillance system. We are so &#39;pedantic&#39; that an Airlock room is built before our main warehouse so as to prevent the slightest bit of temperature or humidity fluctuation. Face detection and 24 hours CCTV surveillance system are also installed by ADT for security protection.</p>
+            <p>Being a reputable and responsible wine merchant, our company only works with selected suppliers with good reputation and quality assurance, we also certified Wine Registration Scheme by HKQAA. &nbsp;We fully understand that storage condition is one of the most important factors affecting wine quality, thus not only do we work with logistic partners who can provide conditioned wine deliveries but also acquired our own warehouses. In 2011, we decided to make a substantial investment to establish a certified wine warehouse and was accredited with the Fine Wine Storage Certificate by HKQAA in 2012. With the certified warehouse, our suppliers are more confident in working with us as they know their wines will be in their best condition at the time of sales. On the other hand, our customers keep returning because they know we are reliable and second to none, both in pricing and wine quality.</p>
             <div style="background: url('images/whc_cert.png');background-position:center; background-repeat:no-repeat; background-size:contain; height:200px"  ng-click="app.whc_cert.modal.show()"></div>
             <p style="height: 200px">&nbsp;</p>            
         </div>          
@@ -1343,6 +1410,9 @@
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('highlightsTabs.html', {closeMenu: true});">
         <ons-icon icon="fa-plus-circle" size="20px"></ons-icon> New Arrivals
       </ons-list-item>
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('othersTabs.html', {closeMenu: true});">
+        <ons-icon icon="fa-coffee" size="20px"></ons-icon> Others
+      </ons-list-item>      
     <ons-list-header></ons-list-header>      
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('newsEvent.html', {closeMenu: true});">
         <ons-icon icon="fa-calendar" size="20px"></ons-icon> News and Events
