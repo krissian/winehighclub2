@@ -15,7 +15,7 @@ angular.module('app').config( [
 '$compileProvider', '$httpProvider',
     function( $compileProvider, $httpProvider, downgularFileToolsProvider ) {
         //allow images to be loaded from filesystem
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|file|blob|filesystem):|data:image\//);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http?|https?|file|blob|filesystem):|data:image\//);
         
         /* configure storage details*/
 //        downgularFileToolsProvider.usePersistentMemory(true);

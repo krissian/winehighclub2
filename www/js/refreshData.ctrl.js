@@ -20,7 +20,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
     
     vm.progress = 0;
     vm.jsonDownloadProgress = 0;    
-    vm.jsonDownloadTotal = 7;
+    vm.jsonDownloadTotal = 11;
     
     ons.ready(function(){
             vm.init();
@@ -91,6 +91,11 @@ angular.module('app').controller("refreshDataController", function($scope, $http
             getJSON('/winesbyCatID.json?cat_id='+80003,'winesbyCatID_80003',true);
             getJSON('/winesbyCatID.json?cat_id='+80002,'winesbyCatID_80002',true);
             getJSON('/winesbyCatID.json?cat_id='+80001,'winesbyCatID_80001',true);
+            //other prod
+            getJSON('/otherprod.json?cat_type=mw','otherprod_mw',true);
+            getJSON('/otherprod.json?cat_type=br','otherprod_br',true);
+            getJSON('/otherprod.json?cat_type=wk','otherprod_wk',true);
+            getJSON('/otherprod.json?','otherprod',true);
             //getJSON('/winesByCat.json','winesByCat',false);
             //getJSON('/winesByCat.json','winesByCat',true);
             getJSON('/productscat.json','productscat',true);
@@ -288,6 +293,7 @@ function writeToFile(fileName, data) {
 
     function getAllFiles($docroot){
         var wines = $localStorage.getObject('wines');        
+        var others = $localStorage.getObject('otherprod');
         
         var thumbnailURL = [];
         var imageURL = [];
@@ -298,7 +304,15 @@ function writeToFile(fileName, data) {
             imageURL.push(ConstantService.productImgURL + wines.wines[i].product_full_image);
             remoteFiles.push(ConstantService.thumbnailURL +wines.wines[i].product_thumb_image);
             remoteFiles.push(ConstantService.productImgURL + wines.wines[i].product_full_image);
-        }        
+        }       
+        for(var i=0; i < others.wines.length; i++){
+        //for(var i=0; i < 10; i++){
+            thumbnailURL.push(ConstantService.thumbnailURL +others.wines[i].product_thumb_image);
+            imageURL.push(ConstantService.productImgURL + others.wines[i].product_full_image);
+            remoteFiles.push(ConstantService.thumbnailURL +others.wines[i].product_thumb_image);
+            remoteFiles.push(ConstantService.productImgURL + others.wines[i].product_full_image);
+        }  
+        
         
         vm.wineDownloadTotal = thumbnailURL.length + imageURL.length;
         console.log ('file to download:'+vm.wineDownloadTotal);
