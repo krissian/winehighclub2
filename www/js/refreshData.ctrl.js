@@ -20,7 +20,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
     
     vm.progress = 0;
     vm.jsonDownloadProgress = 0;    
-    vm.jsonDownloadTotal = 11;
+    vm.jsonDownloadTotal = 12;
     
     ons.ready(function(){
             vm.init();
@@ -96,6 +96,7 @@ angular.module('app').controller("refreshDataController", function($scope, $http
             getJSON('/otherprod.json?cat_type=br','otherprod_br',true);
             getJSON('/otherprod.json?cat_type=wk','otherprod_wk',true);
             getJSON('/otherprod.json?','otherprod',true);
+            getJSON('/vcontentBycatID.json?catid=104','inbox',true);
             //getJSON('/winesByCat.json','winesByCat',false);
             //getJSON('/winesByCat.json','winesByCat',true);
             getJSON('/productscat.json','productscat',true);

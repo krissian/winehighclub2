@@ -1,0 +1,88 @@
+/*Controller: Second level wine category*/
+angular.module('app').controller("inboxDetailController", function($scope, $http, $filter, ConstantService, $cordovaFile, $localStorage){
+    vm = this;
+    var page = app.navi.getCurrentPage();
+    vm.id = page.options.selectedid;    
+    vm.isOffline = false;
+    //vm.thumbnailURL = ConstantService.thumbnailURL;    
+    
+    vm.init = function($scope){
+        console.log('inboxDetailController init');
+        vm.failed = false;        
+        vm.isFetching = true;
+
+        if (!ConstantService.appInit){        
+        $http.get(ConstantService.wsURL + 'vcontentByID.json?id='+vm.id)
+            .success( function(response){              
+                    if (response) {                        
+                        var items = response.data;
+                    }
+                    //vm.feeds = data.jsonFlickrFeed;
+                    vm.wines = items;
+                    vm.isFetching = false;
+                    vm.failed = false;
+                    $localStorage.setObject('inboxbyID_'+vm.id,items);
+                    vm.isOffline = false;
+                    console.log('get wines success');
+                })
+            .error(function(error){                    
+                    vm.failed = true;                                   
+                    vm.isFetching = false;       
+                    vm.wines = $localStorage.getObject('inboxbyID_'+vm.id);
+                    vm.isOffline = true;
+                    console.log('failed');
+                });                
+        } else {
+            vm.isFetching = true;
+            
+            var tmp = $localStorage.getObject('inbox');
+            var tmpWines = tmp.content.filter(function (row) {
+              if(row.id == vm.id) {
+                return true
+              } else {
+                return false;
+              }
+            });
+            var tmpJSONString = '{"content":'+ JSON.stringify(tmpWines) + '}'
+            //vm.wines = tmpWines;
+            vm.wines = JSON.parse(tmpJSONString);
+            console.log('inboxDetailController with localStorage');
+            vm.isFetching = false;
+        
+        }        
+        };
+function filterByID(obj) {
+  if (obj.cat_id == vm.id) {
+    return true;
+  } else {
+    invalidEntries++;
+    return false;
+  }
+}      
+        vm.showDetail = function(url){
+        console.log ('click');
+        console.log ('selectedid' + id);
+        //app.navitwo.pushPage("wineItems.html", { animation: "lift", selectedid: id });
+        //app.slidingMenu.setMainPage('wineItems.html', {closeMenu: true})
+        app.navi.pushPage("wineList-ItemDetailImage.html", { animation: "lift", selectedImage: url });
+    };
+
+        vm.showModal = function(url) {    
+            vm.modal_msg = url;
+            app.modal.show();
+        };
+        
+        vm.hideModal = function() {
+            app.modal.hide();
+        };
+        
+        vm.openURL = function(product_id) {    
+            var url = ConstantService.imgURL + product_id;
+            var ref = window.open(url, '_blank', 'closebuttoncaption=Close,location=yes,enableViewportScale=yes,transitionstyle=coverhorizontal,toolbarposition=top,clearcache=no,clearsessioncache=no');    
+            ref.addEventListener("exit", function () {
+            ref.close();
+        });    
+            ref.show();
+        }
+    
+});

@@ -23,6 +23,8 @@
     <script src="js/highlights.ctrl.js"></script>
     <script src="js/others.ctrl.js"></script>
     <script src="js/otherprod.ctrl.js"></script>
+    <script src="js/inboxList.ctrl.js"></script>
+    <script src="js/inboxDetail.ctrl.js"></script>
     <!-- News & Events-->
     <script src="js/newsEvent.ctrl.js"></script>
     <script src="js/previousEvent.ctrl.js"></script>    
@@ -1217,6 +1219,88 @@
 </ons-modal>                 -->
       </ons-page>
   </ons-template>
+<!-- PAGE: inboxList.html-->
+  <ons-template id="inboxList.html" ng-cloak>
+  <ons-navigator var="app.navi">
+      <!--<ons-page style="background: url('images/whc_background.jpg'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-controller="CatItemController as wine" ng-init="wine.init()"> -->
+      <ons-page ng-controller="inboxListController as wine" ng-init="wine.init()" modifier="whc-list">
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-toolbar-button ng-click="app.slidingMenu.toggleMenu()">
+              <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>
+          <div class="center">{{wine.desc}}</div>
+          <div class="right">
+            <ons-toolbar-button ng-click="wine.init()">
+              <ons-icon icon="fa-refresh" style="font-size: 24px; width: 1em;"></ons-icon>
+            </ons-toolbar-button>
+          </div>          
+        </ons-toolbar>     
+        <div class="search-bar">
+            <input type="search" ng-model="wine.filterQ" class="search-input" style="width: 96%; margin: 6px auto 6px auto;" placeholder="Enter keyword to filter ...">    
+        </div>            
+        <ons-list-item class="center" ng-show="wine.isFetching">  
+            <ons-icon icon="fa-spinner" style="font-size: 24px; width: 1em;" spin='true'></ons-icon> loading ...
+        </ons-list-item>        
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
+        </ons-list-item>         
+        <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.feeds.content  | filter: {title: wine.filterQ} " ng-click="wine.showDetail(item.id)">
+        <!--ng-click="app.newsevent.modal.show()">  -->
+            <!--<img ng-src="{{wine.cmsURL + item.image}}" class="newsevent-image" >-->
+            <ons-row>
+            <ons-col>
+            <div class="category-name">{{item.title}}</div> 
+            <div class="category-message">{{item.publish_up}}</div>
+            </ons-col>
+            </ons-row>
+        </ons-list-item>
+        
+        <ons-modal var="app.newsevent.modal">        
+            <div style="width:100%; height: 95%;background: url('{{wine.cmsURL + wine.eventImgURL}}'); background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.newsevent.modal.hide()"><p style="text-align:right"><ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p></div>                              
+        </ons-modal>        
+      </ons-page>
+      </ons-navigator>
+  </ons-template>      
+<!-- PAGE: inboxList-ItemDetail.html-->
+  <ons-template id="inboxList-ItemDetail.html" ng-cloak>
+      <ons-page ng-controller="inboxDetailController as wine" ng-init="wine.init()" modifier="shop-details" >        
+            <ons-toolbar fixed-style="">
+            <div class="left">
+            <ons-back-button>Back</ons-back-button>
+              </div>
+              <!--<div class="center">{{wine.wines.wines[0].product_name}}</div>-->
+              <div class="center">{{ wine.wines.content[0].title | limitTo: 20 }}{{wine.wines.content[0].title.length > 20 ? '...' : ''}}</div>
+              <div class="right">
+              <!--<ons-button ng-click="wine.share()"><ons-icon icon="fa-share-square-o"></ons-icon></ons-button>-->
+              </div>          
+            </ons-toolbar>
+        <div ng-show="!wine.isFetching">
+        <ons-row>
+        <ons-col>        
+          <div class="card-name">Subject: {{wine.wines.content[0].title}}</div>
+          <div class="card-desc">Last modified: {{wine.wines.content[0].modified}}</div>          
+        </ons-col>
+        </ons-row>        
+        <ons-list-item class="center" ng-show="wine.isOffline">  
+             <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
+        </ons-list-item>         
+        <div style="text-align:center; width:100%;" ng-bind-html="wine.wines.content[0].introtext| to_trusted"></div>
+        
+        </div>
+        <ons-modal var="app.modal">        
+            <div style="width:100%; height: 95%; background-position:center; background-repeat:no-repeat; background-size:contain;" ng-click="app.modal.hide()">
+            <p style="text-align:right">
+                <ons-icon icon="fa-chain-broken-circle-o" style="color:#b93861"></ons-icon>&nbsp;</p>
+            </p>            
+            <p ng-click="app.modal.hide()"><img style="max-width: 70%; height: auto; width: auto;" ng-src="{{wine.productImgURL+wine.wines.wines[0].product_full_image}}" ></p>
+        </div>  
+          <!--<ons-button ng-click="wine.hideModal()">close</ons-button>-->
+        </ons-modal>
+
+      </ons-page>
+  </ons-template>  
 <!-- PAGE: newsEvent.html-->
   <ons-template id="newsEvent.html" ng-cloak>
   <ons-navigator var="app.navi">
@@ -1595,6 +1679,9 @@
         <ons-icon icon="fa-coffee" size="20px"></ons-icon> Others
       </ons-list-item>      
     <ons-list-header></ons-list-header>      
+      <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('inboxList.html', {closeMenu: true});">
+        <ons-icon icon="fa-envelope" size="20px"></ons-icon> Inbox
+      </ons-list-item>    
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('newsEvent.html', {closeMenu: true});">
         <ons-icon icon="fa-calendar" size="20px"></ons-icon> News and Events
       </ons-list-item>
