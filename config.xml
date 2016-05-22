@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" id="com.whc.winehighclub" version="3.0.2">
+<widget xmlns="http://www.w3.org/ns/widgets" id="com.whc.winehighclub" version="3.1.0">
   <name>WineHighClub</name>
   <description/>
   <author/>
@@ -33,7 +33,6 @@
   <allow-intent href="itms-apps:*"/>
   <allow-navigation href="*"/>
   <allow-navigation href="file://*/*"/>
-  <preference name="monaca:WebViewEngine" value="default"/>
   <preference name="monaca:targetFamilyiPhone" value="1"/>
   <preference name="monaca:targetFamilyiPad" value="1"/>
   <preference name="AutoHideSplashScreen" value="true"/>
@@ -50,6 +49,7 @@
   <preference name="KeepRunning" value="true"/>
   <preference name="monaca:AndroidIsPackageNameSeparate" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
+  <preference name="monaca:WebViewEngine" value="default"/>
   <preference name="Orientation" value="default"/>
   <preference name="SplashScreenDelay" value="2000"/>
   <preference name="Fullscreen" value="false"/>
