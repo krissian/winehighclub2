@@ -49,6 +49,24 @@
             });    
             ref.show();
         }        
+    //ons.ready(function(){                    
+        //get device ID
+    monaca.getDeviceId( function(deviceId){
+        console.log("deviceId = " + deviceId);
+    });
+    //});
+    //handler for push
+    monaca.cloud.Push.setHandler(function(data){
+        //console.log(data.url);
+        ons.notification.alert({
+          message: data.message,
+          title: 'WineHighClub',
+          animation: 'default',
+          callback: function(){
+              
+          }
+        });
+    });        
 //        function onDeviceReady(){
 //            var map = new GoogleMap();
 //            map.initialize();
@@ -1245,7 +1263,7 @@
         <ons-list-item class="center" ng-show="wine.isOffline">  
              <div class="category-message"><ons-icon icon="fa-chain-broken" style="font-size: 12px; width: 1em;"></ons-icon>Failed to connect internet. Some functions may not available</div>
         </ons-list-item>         
-        <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.feeds.content  | filter: {title: wine.filterQ} " ng-click="wine.showDetail(item.id)">
+        <ons-list-item ng-hide="wine.isFetching" modifier="chevron" ng-repeat="item in wine.feeds.content  | filter: {title: wine.filterQ}" ng-click="wine.showDetail(item.id)">
         <!--ng-click="app.newsevent.modal.show()">  -->
             <!--<img ng-src="{{wine.cmsURL + item.image}}" class="newsevent-image" >-->
             <ons-row>
