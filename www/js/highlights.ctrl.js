@@ -92,7 +92,15 @@ angular.module('app').controller("highlightsController", function($scope, $http,
             vm.desc += ' ('+ vm.wines.wines.length +')';
             vm.isFetching = false;
             console.log('highlightsController with localStorage');
-        }       
+        }
+//        ons.notification.alert({
+//          message: 'Test',
+//          title: 'WineHighClub',
+//          animation: 'default',
+//          callback: function(){
+//            app.navi.pushPage('inboxList.html', { animation : 'slide' } )
+//          }
+//        });
         };            
     vm.refresh = function($scope){
         console.log('highlightsController refresh');

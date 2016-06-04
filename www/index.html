@@ -51,22 +51,38 @@
         }        
     //ons.ready(function(){                    
         //get device ID
+    /*
     monaca.getDeviceId( function(deviceId){
         console.log("deviceId = " + deviceId);
     });
+    */
     //});
     //handler for push
-    monaca.cloud.Push.setHandler(function(data){
-        //console.log(data.url);
-        ons.notification.alert({
-          message: data.message,
-          title: 'WineHighClub',
-          animation: 'default',
-          callback: function(){
-              
-          }
-        });
-    });        
+    ons.ready(function () {
+        monaca.cloud.Push.setHandler(function(data){
+            //console.log(data.url);
+            ons.notification.confirm({
+              message: 'Test',//data.message,
+              title: 'WineHighClub',
+              buttonLabels: ['Cancel', 'Go to Inbox'],
+              animation: 'default',
+              callback: function(idx){
+                  console.log('confirm dialog press:'+idx);
+                 //app.navi.popPage();
+                 switch (idx){
+                    case 0: //cancel
+                         //app.navi.pushPage('inboxList.html', { animation : 'slide' } );  
+                         break;
+                    case 1: //OK
+                          app.slidingMenu.setMainPage('inboxList.html', {closeMenu: true});
+                         break;                         
+                 }
+                 
+                 //app.navi.replacePage('inboxList.html', { animation : 'slide' } );  
+              }
+            });
+        });   
+    });
 //        function onDeviceReady(){
 //            var map = new GoogleMap();
 //            map.initialize();
@@ -79,7 +95,7 @@
     <ons-sliding-menu var="app.slidingMenu" menu-page="mainMenu.html" main-page="tab.html" side="left" type="overlay" max-slide-distance="200px" var="menu">
     </ons-sliding-menu>
     -->
-    
+    <!--<ons-navigator var="app.navi" page="loading.html"></ons-navigator>-->
     <ons-sliding-menu main-page="loading.html" menu-page="mainMenu.html" side="left" max-slide-distance="250px" var="app.slidingMenu"></ons-sliding-menu>
 
 <!--Wine List TAB -->
