@@ -1313,7 +1313,8 @@
         <ons-row>
         <ons-col>        
           <div class="card-name">Subject: {{wine.wines.content[0].title}}</div>
-          <div class="card-desc">Last modified: {{wine.wines.content[0].modified}}</div>          
+          <div class="card-desc" ng-show="wine.wines.content[0].modified_by != '0'">Last modified: {{wine.wines.content[0].modified }}</div>          
+          <div class="card-desc" ng-show="wine.wines.content[0].modified_by == '0'">Last modified: {{wine.wines.content[0].created }}</div>          
         </ons-col>
         </ons-row>        
         <ons-list-item class="center" ng-show="wine.isOffline">  
@@ -1696,6 +1697,7 @@
   </ons-template>
 <!-- MENU -->
   <ons-template id="mainMenu.html">
+  <ons-page ng-controller="refreshDataController as wine">
     <ons-list>        
       <ons-list-header></ons-list-header>
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('wineList-exclprod.html', {closeMenu: true});">
@@ -1713,7 +1715,7 @@
       </ons-list-item>      
     <ons-list-header></ons-list-header>      
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('inboxList.html', {closeMenu: true});">
-        <ons-icon icon="fa-envelope" size="20px"></ons-icon> Inbox
+        <ons-icon icon="fa-envelope" size="20px"></ons-icon> <span class="badge1" data-badge="{{wine.jsonDownloadTotal}}">Inbox</span> 
       </ons-list-item>    
       <ons-list-item modifier="chevron" onclick="app.slidingMenu.setMainPage('newsEvent.html', {closeMenu: true});">
         <ons-icon icon="fa-calendar" size="20px"></ons-icon> News and Events
@@ -1737,6 +1739,7 @@
         <ons-icon icon="fa-cloud-download" size="20px"></ons-icon> Wine List Sync
       </ons-list-item>      -->
     </ons-list> 
+    </ons-page>
   </ons-template>
 </body>
 </html>
