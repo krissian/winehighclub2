@@ -1,15 +1,24 @@
 /*Controller: Second level wine category*/
-angular.module('app').controller("inboxListController", function($rootScope, $scope, $http, $filter, ConstantService, $localStorage){
+angular.module('app').controller("menuInboxListController", function($rootScope, $scope, $http, $filter, ConstantService, $localStorage, $interval, $timeout){
     vm = this;
     var page = app.navi.getCurrentPage();
     
     vm.id = 70001;    
     //console.log('wine.id : ' + vm.id);
     //vm.desc = 'Inbox' + ConstantService.test;
+    /*
+    app.slidingMenu.on('preopen',callMenu);
+    
+    function callMenu(){
+      console.log('callMenu');  
+      //vm.unReadCount= countUnRead();        
+      vm.init();
+    };
+    */
     vm.desc = 'Inbox';
     vm.isOffline = false;
     vm.cmsURL = ConstantService.cmsURL;
-
+    vm.unReadCount = 0;
     vm.init = function($scope){
         //vm.id = $scope.id;
         vm.failed = false;        
@@ -24,22 +33,31 @@ angular.module('app').controller("inboxListController", function($rootScope, $sc
                     vm.feeds = items;
                     vm.isFetching = false;
                     vm.failed = false;          
-                    //vm.desc += ' ('+ response.data.content.length +')';
-                    vm.desc = 'Inbox' + ' ('+ countUnRead()+' / '+response.data.content.length +')';
+                    vm.desc += ' ('+ response.data.content.length +')';
                     $localStorage.setObject('inbox',items);
-                    vm.isOffline = false;                    
+                    vm.isOffline = false;                  
+                    vm.unReadCount = countUnRead();                    
                     console.log('get inbox success');
                 })
             .error(function(error){                    
                     vm.failed = true;                                   
                     vm.isFetching = false; 
                     vm.feeds = $localStorage.getObject('inbox');
-                    vm.desc = 'Inbox' + ' ('+ countUnRead()+' / '+response.data.content.length +')';
                     vm.isOffline = true;
+                    vm.unReadCount = countUnRead();
                     console.log('failed');
                 });                
                   
         };
+    /*
+    $interval(function() {
+        console.log( 'automatically update view?' );
+        $timeout(function() {
+            vm.unReadCount = countUnRead();        
+            //vm.getInboxUnread();
+        }, 1000);
+    }, 1000 );
+    */
 vm.fetchPhotos = function($scope){
         vm.failed = false;        
         vm.isFetching = true;
@@ -149,7 +167,22 @@ vm.fetchPhotos = function($scope){
         console.log('countUnRead'+count);
         return count;
         
-    }    
+    }
+    vm.getInboxUnread = function (){
+        //get items from sid
+        var tmp = $localStorage.getObject('inbox');
+        
+        var count = 0;
+        console.log('tmp.content.length'+tmp.content.length);
+        for(var i=0; i < tmp.content.length; i++){
+            var tmp2 = $localStorage.getObject('inboxRead_'+tmp.content[i].id);    
+            if (!tmp2.content){
+            count++;
+            }            
+        }
+        console.log('countUnRead'+count);
+        return count;
+    }
     vm.checkRead = function(sid){
         //console.log('checkRead called '+ sid);
         //true read

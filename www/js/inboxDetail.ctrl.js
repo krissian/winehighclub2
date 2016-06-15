@@ -1,16 +1,33 @@
 /*Controller: Second level wine category*/
-angular.module('app').controller("inboxDetailController", function($scope, $http, $filter, ConstantService, $cordovaFile, $localStorage){
+angular.module('app').controller("inboxDetailController", function($rootScope, $scope, $http, $filter, ConstantService, $cordovaFile, $localStorage){
     vm = this;
     var page = app.navi.getCurrentPage();
     vm.id = page.options.selectedid;    
     vm.isOffline = false;
-    //vm.thumbnailURL = ConstantService.thumbnailURL;    
+    //vm.thumbnailURL = ConstantService.thumbnailURL;        
+    function replacePreviousPage(url) {
+      var pages = app.navi.getPages(),
+          index = pages.length - 2;
+
+      if (index < 0)
+          return;
+
+      app.navi.insertPage(index, url);
+      pages.splice(index, 1);
+    };
     
+    vm.goPop = function($scope){
+      ConstantService.test++;    
+      //app.navi.popPage({'refresh': true});  
+      //app.navi.resetToPage('inboxList2.html', {animation: "lift"});
+      replacePreviousPage('inboxListReload.html');
+      app.navi.popPage();
+    };
     vm.init = function($scope){
         console.log('inboxDetailController init');
         vm.failed = false;        
         vm.isFetching = true;
-
+        
         if (!ConstantService.appInit){        
         $http.get(ConstantService.wsURL + 'vcontentByID.json?id='+vm.id)
             .success( function(response){              
@@ -48,7 +65,7 @@ angular.module('app').controller("inboxDetailController", function($scope, $http
             vm.wines = JSON.parse(tmpJSONString);
             console.log('inboxDetailController with localStorage');
             vm.isFetching = false;
-        
+            
         }        
         };
 function filterByID(obj) {
