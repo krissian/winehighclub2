@@ -46,6 +46,7 @@ angular.module('app').controller("inboxDetailController", function($rootScope, $
                     vm.failed = true;                                   
                     vm.isFetching = false;       
                     vm.wines = $localStorage.getObject('inboxbyID_'+vm.id);
+                    $localStorage.setObject('inboxRead_'+vm.id, vm.wines);
                     vm.isOffline = true;
                     console.log('failed');
                 });                
@@ -63,6 +64,7 @@ angular.module('app').controller("inboxDetailController", function($rootScope, $
             var tmpJSONString = '{"content":'+ JSON.stringify(tmpWines) + '}'
             //vm.wines = tmpWines;
             vm.wines = JSON.parse(tmpJSONString);
+            $localStorage.setObject('inboxRead_'+vm.id, vm.wines);
             console.log('inboxDetailController with localStorage');
             vm.isFetching = false;
             
