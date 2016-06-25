@@ -58,7 +58,7 @@
         });
         
         monaca.cloud.Push.setHandler(function(data){
-            //console.log(data.url);
+            //console.log(data.url);            
             ons.notification.confirm({
               message: data.message,
               title: 'WineHighClub',
@@ -82,6 +82,8 @@
             });
         });   
     });
+    
+    
 //        function onDeviceReady(){
 //            var map = new GoogleMap();
 //            map.initialize();

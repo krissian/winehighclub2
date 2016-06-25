@@ -12,6 +12,7 @@ angular.module('app').factory('ConstantService', function() {
         localImgURL: '',
         backCatID: '80003',
         test: 3,
+        inboxUnRead: 0,
   };
 });
 

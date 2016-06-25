@@ -27,7 +27,13 @@ angular.module('app').controller("inboxListController", function($rootScope, $sc
                     //vm.desc += ' ('+ response.data.content.length +')';
                     vm.desc = 'Inbox' + ' ('+ countUnRead()+' / '+response.data.content.length +')';
                     $localStorage.setObject('inbox',items);
-                    vm.isOffline = false;                    
+                    vm.isOffline = false;            
+                    if(ons.platform.isIOS()){
+                        //cordova.plugins.notification.badge.clear();    
+                        var unReadCount = countUnRead();
+                        ConstantService.inboxUnRead = unReadCount;
+                        cordova.plugins.notification.badge.set(unReadCount);
+                    }                    
                     console.log('get inbox success');
                 })
             .error(function(error){                    
@@ -36,6 +42,12 @@ angular.module('app').controller("inboxListController", function($rootScope, $sc
                     vm.feeds = $localStorage.getObject('inbox');
                     vm.desc = 'Inbox' + ' ('+ countUnRead()+' / '+response.data.content.length +')';
                     vm.isOffline = true;
+                    if(ons.platform.isIOS()){
+                        //cordova.plugins.notification.badge.clear();    
+                        var unReadCount = countUnRead();
+                        ConstantService.inboxUnRead = unReadCount;
+                        cordova.plugins.notification.badge.set(unReadCount);
+                    }
                     console.log('failed');
                 });                
                   
@@ -139,14 +151,14 @@ vm.fetchPhotos = function($scope){
         var tmp = $localStorage.getObject('inbox');
         
         var count = 0;
-        console.log('tmp.content.length'+tmp.content.length);
+        //console.log('tmp.content.length'+tmp.content.length);
         for(var i=0; i < tmp.content.length; i++){
             var tmp2 = $localStorage.getObject('inboxRead_'+tmp.content[i].id);    
             if (!tmp2.content){
             count++;
             }            
         }
-        console.log('countUnRead'+count);
+        //console.log('countUnRead'+count);
         return count;
         
     }    

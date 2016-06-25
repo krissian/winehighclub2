@@ -25,7 +25,17 @@ angular.module('app').controller("refreshDataController", function($scope, $http
     ons.ready(function(){
             vm.init();
     });
-    
+    //update badge
+    vm.refreshBadge = function() {
+        if(ons.platform.isIOS()){
+            //cordova.plugins.notification.badge.clear();                
+            cordova.plugins.notification.badge.set(ConstantService.inboxUnRead);
+        } else {
+            console.log(ConstantService.inboxUnRead);
+        }
+    }    
+    //$interval( function(){ vm.refreshBadge(); }, 60*1000);
+    $interval( function(){ vm.refreshBadge(); }, 15*1000);
     
     vm.callAtInterval = function() {
         console.log("vm.callAtInterval - Interval occurred");
@@ -140,7 +150,11 @@ angular.module('app').controller("refreshDataController", function($scope, $http
             .then(function () { 
                 $timeout(function () { 
                     getImg();
-                    
+                    vm.unReadCount = countUnRead();
+                    if(ons.platform.isIOS()){
+                        //cordova.plugins.notification.badge.clear();        
+                        cordova.plugins.notification.badge.set(vm.unReadCount);
+                    }  
                 });                
                 
             }).finally(function(){ 
@@ -484,7 +498,6 @@ function writeToFile(fileName, data) {
                     
                 });
       },
-
     function(error) { // error callback for #requestFileSystem
        console.log('Error with #resolveLocalFileSystemURL method.', error.code);
     });
@@ -493,4 +506,21 @@ function writeToFile(fileName, data) {
        console.log('Error with #requestFileSystem method.', error);
     });
     }
+        function countUnRead(){
+        //get items from sid
+        var tmp = $localStorage.getObject('inbox');
+        
+        var count = 0;
+        //console.log('tmp.content.length'+tmp.content.length);
+        for(var i=0; i < tmp.content.length; i++){
+            var tmp2 = $localStorage.getObject('inboxRead_'+tmp.content[i].id);    
+            if (!tmp2.content){
+            count++;
+            }            
+        }
+        ConstantService.inboxUnRead = count;
+        //console.log('countUnRead'+count);
+        return count;
+        
+    }  
 });
