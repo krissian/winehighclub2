@@ -25,7 +25,7 @@ angular.module('app').controller("othersController", function($scope, $http, $fi
         
     if (vm.id == 81001){vm.desc = 'Mineral Water';vm.cat='mw';}
     if (vm.id == 81002){vm.desc = 'Craft Beer';vm.cat='br';}
-    if (vm.id == 81003){vm.desc = 'Whisky/Whiskey';vm.cat='wk';}
+    if (vm.id == 81003){vm.desc = 'Spirits';vm.cat='wk';}
     
     try {
         if(!ons.platform.isAndroid() && !ons.platform.isIOS()){
@@ -54,7 +54,7 @@ angular.module('app').controller("othersController", function($scope, $http, $fi
         console.log('othersController init');
         if (vm.id == 81001){vm.desc = 'Mineral Water';vm.cat='mw';}
         if (vm.id == 81002){vm.desc = 'Craft Beer';vm.cat='br';}
-        if (vm.id == 81003){vm.desc = 'Whisky/Whiskey';vm.cat='wk';}
+        if (vm.id == 81003){vm.desc = 'Spirits';vm.cat='wk';}
         //vm.id = $scope.id;
         vm.failed = false;        
         vm.isFetching = true;
@@ -62,7 +62,7 @@ angular.module('app').controller("othersController", function($scope, $http, $fi
         if (!ConstantService.appInit){
         $http({
             method: 'GET',
-            url: ConstantService.wsURL + '/otherprod.json?cat_id='+vm.cat,
+            url: ConstantService.wsURL + '/otherprod.json?cat_type='+vm.cat,
             cache: false
           }).success( function(response){              
                     if (response) {                        
@@ -99,7 +99,7 @@ angular.module('app').controller("othersController", function($scope, $http, $fi
         
         if (vm.id == 81001){vm.desc = 'Mineral Water';vm.cat='mw';}
         if (vm.id == 81002){vm.desc = 'Craft Beer';vm.cat='br';}
-        if (vm.id == 81003){vm.desc = 'Whisky/Whiskey';vm.cat='wk';}
+        if (vm.id == 81003){vm.desc = 'Spirits';vm.cat='wk';}
         
         vm.failed = false;        
         vm.isFetching = true;
@@ -107,7 +107,7 @@ angular.module('app').controller("othersController", function($scope, $http, $fi
         
         $http({
             method: 'GET',
-            url: ConstantService.wsURL + '/otherprod.json?cat_id='+vm.cat,
+            url: ConstantService.wsURL + '/otherprod.json?cat_type='+vm.cat,
             cache: false
           }).success( function(response){              
                     if (response) {                        

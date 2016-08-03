@@ -19,11 +19,8 @@
     "description-ja": "",
     "description-en": "",
     "category": "User Template",
-    "platform": [
-        "android",
-        "ios"
-    ],
-    "name": "generated-1463967452-560fcf43fd1734a66178dfc4",
+    "platform": [],
+    "name": "generated-1468372315-560fcf43fd1734a66178dfc4",
     "external_plugins": [
         "cordova-plugin-splashscreen@2.1.0",
         "cordova-plugin-whitelist@1.0.0",
